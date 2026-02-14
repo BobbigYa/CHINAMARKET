@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHINA MARKET | Tu bazar chino de confianza</title>
+<!-- Fuentes -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/agrandir-wide" type="text/css">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root {
+--primary-gold: #D4AF37;
+--primary-gold-light: #E6C566;
+--primary-gold-dark: #B89522;
+--primary-gray: #2D2D2D;
+--secondary-gray: #4A4A4A;
+--light-gray: #F5F5F5;
+--white: #FFFFFF;
+--glass-bg: rgba(255, 255, 255, 0.85);
+--glass-border: rgba(255, 255, 255, 0.18);
+--shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+--shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+--shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+--shadow-xl: 0 30px 60px rgba(0, 0, 0, 0.15);
+--transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+--transition-fast: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+--border-radius-sm: 8px;
+--border-radius-md: 16px;
+--border-radius-lg: 24px;
+--border-radius-xl: 32px;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Nunito', 'Quicksand', sans-serif;
+background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+color: var(--primary-gray);
+line-height: 1.6;
+overflow-x: hidden;
+background-attachment: fixed;
+}
+/* Animaciones de carga */
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.animate-fade-in {
+animation: fadeInUp 0.6s ease-out forwards;
+}
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+.animate-delay-5 { animation-delay: 0.5s; }
+.animate-delay-6 { animation-delay: 0.6s; }
+.animate-delay-7 { animation-delay: 0.7s; }
+.animate-delay-8 { animation-delay: 0.8s; }
+.animate-delay-9 { animation-delay: 0.9s; }
+/* Heartbeat animation */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.2); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.2); }
+  70% { transform: scale(1); }
+}
+/* Scroll animation for banner */
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+/* Social media hover effect */
+.social-icon:hover {
+  transform: scale(1.2) translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+/* Estilos globales */
+.container {
+width: 90%;
+max-width: 1400px;
+margin: 0 auto;
+padding: 0 20px;
+}
+section {
+padding: 100px 0;
+}
+.section-title {
+font-size: 2.5rem;
+font-weight: 700;
+text-align: center;
+margin-bottom: 20px;
+position: relative;
+display: inline-block;
+left: 50%;
+transform: translateX(-50%);
+color: var(--primary-gray);
+}
+.section-title::after {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 50%;
+transform: translateX(-50%);
+width: 60px;
+height: 4px;
+background: var(--primary-gold);
+border-radius: 2px;
+}
+.section-subtitle {
+text-align: center;
+font-size: 1.25rem;
+color: var(--secondary-gray);
+max-width: 700px;
+margin: 30px auto 60px;
+}
+/* Header y navegación */
+header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+padding: 20px 0;
+transition: var(--transition);
+}
+header.scrolled {
+background: var(--glass-bg);
+backdrop-filter: blur(12px);
+box-shadow: var(--shadow-md);
+padding: 12px 0;
+}
+nav {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0 20px;
+}
+.logo {
+font-family: 'Agrandir Wide', 'Montserrat', sans-serif;
+font-size: 2.2rem;
+font-weight: 700;
+color: var(--primary-gray);
+text-decoration: none;
+display: flex;
+align-items: center;
+transition: var(--transition);
+}
+.logo:hover {
+color: var(--primary-gold);
+}
+.logo-icon {
+margin-right: 8px;
+font-size: 1.8rem;
+}
+.nav-links {
+display: flex;
+list-style: none;
+}
+.nav-links li {
+margin-left: 35px;
+}
+.nav-links a {
+text-decoration: none;
+color: var(--primary-gray);
+font-weight: 600;
+font-size: 1.05rem;
+position: relative;
+padding: 5px 0;
+transition: var(--transition);
+}
+.nav-links a::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 0;
+height: 2px;
+background: var(--primary-gold);
+transition: var(--transition);
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+width: 100%;
+}
+.nav-links a:hover,
+.nav-links a.active {
+color: var(--primary-gold);
+}
+.hamburger {
+display: none;
+background: none;
+border: none;
+font-size: 1.5rem;
+color: var(--primary-gray);
+cursor: pointer;
+}
+/* Hero section - MODIFICADO */
+.hero {
+height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+background: #FFFFFF;
+color: var(--primary-gray);
+position: relative;
+overflow: hidden;
+}
+.hero::before {
+display: none;
+}
+.hero h1 {
+font-size: 4.5rem;
+font-weight: 800;
+margin-bottom: 25px;
+letter-spacing: -1.5px;
+color: var(--primary-gray);
+background: none;
+-webkit-background-clip: unset;
+background-clip: unset;
+-webkit-text-fill-color: unset;
+}
+.hero p {
+font-size: 1.6rem;
+margin-bottom: 40px;
+font-weight: 300;
+color: var(--secondary-gray);
+opacity: 1;
+}
+.cta-button {
+display: inline-block;
+background: var(--primary-gold);
+color: var(--white);
+padding: 16px 45px;
+border-radius: 50px;
+text-decoration: none;
+font-weight: 700;
+font-size: 1.15rem;
+letter-spacing: 1px;
+text-transform: uppercase;
+box-shadow: var(--shadow-lg);
+transition: var(--transition);
+border: 2px solid var(--primary-gold);
+position: relative;
+overflow: hidden;
+z-index: 1;
+}
+.cta-button::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 0;
+height: 100%;
+background: var(--primary-gold-dark);
+z-index: -1;
+transition: var(--transition);
+}
+.cta-button:hover {
+transform: translateY(-3px);
+box-shadow: var(--shadow-xl);
+color: var(--white);
+}
+.cta-button:hover::before {
+width: 100%;
+}
+.cta-button.secondary {
+background: transparent;
+color: var(--primary-gray);
+margin-left: 15px;
+border-color: var(--primary-gray);
+}
+.cta-button.secondary::before {
+background: rgba(45, 45, 45, 0.1);
+}
+.cta-button.secondary:hover {
+background: var(--primary-gray);
+color: var(--white);
+}
+/* Ofertas especiales */
+.offers {
+background: var(--white);
+position: relative;
+overflow: hidden;
+}
+.offers::before {
+content: '';
+position: absolute;
+top: -50%;
+left: -10%;
+width: 120%;
+height: 200%;
+background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+z-index: 0;
+}
+.offers-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 25px;
+margin-top: 40px;
+position: relative;
+z-index: 1;
+}
+.offer-card {
+background: var(--glass-bg);
+backdrop-filter: blur(10px);
+border: 1px solid var(--glass-border);
+border-radius: var(--border-radius-md);
+padding: 30px;
+text-align: center;
+box-shadow: var(--shadow-md);
+transition: var(--transition);
+position: relative;
+overflow: hidden;
+}
+.offer-card::before {
+content: '';
+position: absolute;
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background: linear-gradient(45deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+transform: rotate(45deg);
+transition: var(--transition);
+z-index: -1;
+}
+.offer-card:hover {
+transform: translateY(-10px);
+box-shadow: var(--shadow-lg);
+}
+.offer-card:hover::before {
+transform: rotate(45deg) translateX(100%);
+}
+.offer-card h3 {
+font-size: 1.5rem;
+margin-bottom: 15px;
+color: var(--primary-gold);
+font-weight: 700;
+}
+.offer-card p {
+font-size: 1.1rem;
+color: var(--secondary-gray);
+}
+/* Secciones de productos */
+.sections {
+background: var(--light-gray);
+position: relative;
+}
+.sections-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+gap: 35px;
+margin-top: 60px;
+}
+.section-card {
+background: var(--white);
+border-radius: var(--border-radius-lg);
+overflow: hidden;
+box-shadow: var(--shadow-md);
+transition: var(--transition);
+position: relative;
+cursor: default; /* 改成普通光标，不可点击 */
+}
+.section-card:hover {
+transform: translateY(-12px);
+box-shadow: var(--shadow-xl);
+}
+.section-img {
+height: 220px;
+width: 100%;
+object-fit: cover;
+display: block;
+transition: var(--transition);
+}
+.section-card:hover .section-img {
+transform: scale(1.05);
+}
+.section-content {
+padding: 25px;
+text-align: center;
+}
+.section-icon {
+width: 60px;
+height: 60px;
+background: var(--glass-bg);
+backdrop-filter: blur(8px);
+border: 1px solid var(--glass-border);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 0 auto 15px;
+color: var(--primary-gold);
+transition: var(--transition);
+}
+.section-card:hover .section-icon {
+transform: scale(1.1) rotate(5deg);
+background: var(--primary-gold);
+color: var(--white);
+}
+.section-card h3 {
+font-size: 1.75rem;
+margin-bottom: 10px;
+font-weight: 700;
+color: var(--primary-gray);
+}
+.section-card p {
+color: var(--secondary-gray);
+font-size: 1.05rem;
+}
+/* Ubicación */
+.location {
+background: var(--white);
+position: relative;
+overflow: hidden;
+}
+.location::before {
+content: '';
+position: absolute;
+top: -30%;
+right: -15%;
+width: 60%;
+height: 160%;
+background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+z-index: 0;
+}
+.location-container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 50px;
+align-items: center;
+position: relative;
+z-index: 1;
+}
+.location-info h2 {
+font-size: 2.8rem;
+margin-bottom: 30px;
+color: var(--primary-gray);
+}
+.location-details {
+margin-top: 30px;
+}
+.location-item {
+margin-bottom: 25px;
+display: flex;
+align-items: flex-start;
+}
+.location-icon {
+min-width: 40px;
+height: 40px;
+background: var(--primary-gold);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: var(--white);
+margin-right: 15px;
+flex-shrink: 0;
+margin-top: 4px;
+}
+.location-text h3 {
+font-size: 1.4rem;
+margin-bottom: 8px;
+color: var(--primary-gray);
+font-weight: 600;
+}
+.location-text p,
+.location-text a {
+color: var(--secondary-gray);
+font-size: 1.15rem;
+text-decoration: none;
+transition: var(--transition);
+display: block;
+}
+.location-text a:hover {
+color: var(--primary-gold);
+transform: translateX(5px);
+}
+.map-container {
+width: 100%;
+height: 450px;
+border-radius: var(--border-radius-lg);
+overflow: hidden;
+box-shadow: var(--shadow-xl);
+position: relative;
+}
+.map-container iframe {
+width: 100%;
+height: 100%;
+border: none;
+display: block;
+}
+/* Footer */
+footer {
+background: var(--primary-gray);
+color: var(--light-gray);
+padding: 70px 0 30px;
+position: relative;
+}
+.footer-content {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 40px;
+}
+.footer-column h3 {
+font-size: 1.6rem;
+margin-bottom: 25px;
+position: relative;
+padding-bottom: 10px;
+display: inline-block;
+}
+.footer-column h3::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 40px;
+height: 3px;
+background: var(--primary-gold);
+border-radius: 2px;
+}
+.footer-column p {
+margin: 15px 0;
+opacity: 0.85;
+line-height: 1.7;
+}
+.footer-links {
+list-style: none;
+margin-top: 20px;
+}
+.footer-links li {
+margin-bottom: 12px;
+}
+.footer-links a {
+color: var(--light-gray);
+text-decoration: none;
+transition: var(--transition);
+opacity: 0.85;
+display: block;
+padding: 5px 0;
+}
+.footer-links a:hover {
+color: var(--primary-gold);
+opacity: 1;
+transform: translateX(5px);
+}
+.copyright {
+text-align: center;
+padding-top: 40px;
+margin-top: 30px;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+font-size: 0.95rem;
+opacity: 0.8;
+}
+.copyright strong {
+color: var(--primary-gold);
+}
+/* Responsive */
+@media (max-width: 992px) {
+.location-container {
+grid-template-columns: 1fr;
+}
+.map-container {
+height: 400px;
+}
+.hero h1 {
+font-size: 3.8rem;
+}
+}
+@media (max-width: 768px) {
+.hamburger {
+display: block;
+}
+.nav-links {
+position: fixed;
+top: 80px;
+right: -100%;
+flex-direction: column;
+background: var(--glass-bg);
+backdrop-filter: blur(10px);
+width: 80%;
+height: calc(100vh - 80px);
+padding: 40px 0;
+transition: var(--transition);
+box-shadow: var(--shadow-lg);
+border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg);
+border-left: 1px solid var(--glass-border);
+z-index: 100;
+}
+.nav-links.active {
+right: 0;
+}
+.nav-links li {
+margin: 0 0 25px 0;
+}
+.hero h1 {
+font-size: 3.2rem;
+}
+.hero p {
+font-size: 1.4rem;
+}
+.cta-button {
+padding: 14px 35px;
+font-size: 1.05rem;
+}
+.cta-button.secondary {
+display: block;
+margin: 20px auto 0;
+width: 220px;
+}
+section {
+padding: 70px 0;
+}
+.section-title {
+font-size: 2.2rem;
+}
+.modal-content {
+width: 95%;
+max-height: 85vh;
+}
+}
+@media (max-width: 480px) {
+.hero h1 {
+font-size: 2.8rem;
+}
+.section-title {
+font-size: 2rem;
+}
+.section-subtitle {
+font-size: 1.1rem;
+}
+.offer-card {
+padding: 25px 15px;
+}
+.location-info h2 {
+font-size: 2.3rem;
+}
+.map-container {
+height: 350px;
+}
+}
+</style>
+</head>
+<body>
+<!-- Header -->
+<header>
+<nav class="container">
+<!-- LOGO MODIFICADO -->
+<a href="#" class="logo">
+CHINA MARKET
+</a>
+<ul class="nav-links">
+<li><a href="#inicio" class="active">Inicio</a></li>
+<li><a href="#secciones">Secciones</a></li>
+<li><a href="#ubicacion">Ubicación</a></li>
+<li><a href="#contacto">Contacto</a></li>
+</ul>
+<button class="hamburger" id="hamburger">
+<i data-lucide="menu"></i>
+</button>
+</nav>
+</header>
+<!-- Hero Section - MODIFICADO -->
+<section class="hero" id="inicio">
+<div class="hero-content">
+<h1>Tu bazar chino de confianza</h1>
+<p>Encuentra todo lo que necesitas para tu hogar, oficina o negocio a los mejores precios. Más de 10,000 productos de calidad directamente desde China.</p>
+<a href="#secciones" class="cta-button">Explorar productos</a>
+<a href="#ubicacion" class="cta-button secondary">Visítanos</a>
+</div>
+</section>
+<!-- Ofertas Especiales - MODIFICADO COMPLETAMENTE -->
+<section class="offers" id="ofertas">
+<div class="container">
+<div style="background: linear-gradient(135deg, #C41E3A 0%, #E63946 100%); padding: 50px 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(220, 20, 60, 0.3);">
+<h2 style="font-size: 56px; color: white; text-align: center; margin-bottom: 30px; animation: heartbeat 1.5s ease-in-out infinite; font-weight: 800; letter-spacing: -1px;">¡REBAJAS DE 15%!</h2>
+<div style="width: 85%; height: 65px; border-radius: 35px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255,255,255,0.4); margin: 0 auto; overflow: hidden;">
+<div style="display: inline-block; white-space: nowrap; animation: scroll-left 10s linear infinite;">
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">•</span>
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">•</span>
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">•</span>
+<span style="color: white; font-size: 1.2rem; font-weight: 600; padding: 0 20px;">TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Secciones de Productos -->
+<section class="sections" id="secciones">
+<div class="container">
+<h2 class="section-title animate-fade-in">Nuestras Secciones</h2>
+<p class="section-subtitle animate-fade-in animate-delay-1">Explora nuestras categorías cuidadosamente seleccionadas con miles de productos para satisfacer todas tus necesidades.</p>
+<div class="sections-grid">
+<!-- Herramientas -->
+<div class="section-card animate-fade-in animate-delay-2">
+<img src="https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=800" alt="Herramientas" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="wrench" width="32" height="32"></i>
+</div>
+<h3>Herramientas</h3>
+<p>Herramientas para el hogar y bricolaje</p>
+</div>
+</div>
+<!-- Estudiantes -->
+<div class="section-card animate-fade-in animate-delay-3">
+<img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800" alt="Material escolar" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="book-open" width="32" height="32"></i>
+</div>
+<h3>Estudiantes</h3>
+<p>Material escolar y de oficina</p>
+</div>
+</div>
+<!-- Juguetes -->
+<div class="section-card animate-fade-in animate-delay-4">
+<img src="https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=800" alt="Juguetes" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="gamepad-2" width="32" height="32"></i>
+</div>
+<h3>Juguetes</h3>
+<p>Juguetes para todas las edades</p>
+</div>
+</div>
+<!-- Mascotas -->
+<div class="section-card animate-fade-in animate-delay-5">
+<img src="https://images.unsplash.com/photo-1415369629372-26f2fe60c467?w=800" alt="Accesorios para mascotas" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="paw-print" width="32" height="32"></i>
+</div>
+<h3>Mascotas</h3>
+<p>Accesorios y alimentos para tus mascotas</p>
+</div>
+</div>
+<!-- Verano -->
+<div class="section-card animate-fade-in animate-delay-6">
+<img src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=800" alt="Productos de verano" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="sun" width="32" height="32"></i>
+</div>
+<h3>Verano</h3>
+<p>Productos para disfrutar del verano</p>
+</div>
+</div>
+<!-- Invierno -->
+<div class="section-card animate-fade-in animate-delay-7">
+<img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800" alt="Artículos de invierno" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="snowflake" width="32" height="32"></i>
+</div>
+<h3>Invierno</h3>
+<p>Artículos para la temporada de invierno</p>
+</div>
+</div>
+<!-- Plásticos - IMAGEN MODIFICADA CON NUEVO LINK -->
+<div class="section-card animate-fade-in animate-delay-8">
+<img src="https://sweethomesh.com/cdn/shop/files/IMG_8945.jpg?v=1733495766" alt="Cajas de almacenaje de plástico" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="box" width="32" height="32"></i>
+</div>
+<h3>Plásticos</h3>
+<p>Envases y utensilios de plástico</p>
+</div>
+</div>
+<!-- Cocina -->
+<div class="section-card animate-fade-in animate-delay-9">
+<img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800" alt="Utensilios de cocina" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="chef-hat" width="32" height="32"></i>
+</div>
+<h3>Cocina</h3>
+<p>Utensilios y accesorios de cocina</p>
+</div>
+</div>
+<!-- Navidad -->
+<div class="section-card animate-fade-in">
+<img src="https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=800" alt="Decoración navideña" class="section-img">
+<div class="section-content">
+<div class="section-icon">
+<i data-lucide="gift" width="32" height="32"></i>
+</div>
+<h3>Navidad</h3>
+<p>Decoración y artículos navideños</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Ubicación -->
+<section class="location" id="ubicacion">
+<div class="container">
+<h2 class="section-title animate-fade-in">Dónde Estamos</h2>
+<p class="section-subtitle animate-fade-in animate-delay-1">Visítanos en nuestra tienda física en Reinosa, Cantabria. Estamos encantados de atenderte personalmente.</p>
+<div class="location-container">
+<div class="location-info animate-fade-in animate-delay-2">
+<h2>Nuestra tienda en Reinosa</h2>
+<div class="location-details">
+<div class="location-item">
+<div class="location-icon">
+<i data-lucide="map-pin" width="20" height="20"></i>
+</div>
+<div class="location-text">
+<h3>Dirección</h3>
+<a href="https://maps.google.com/?q=Calle+Avenida+de+Cantabria+N101A,+Reinosa,+Cantabria" target="_blank">Av. Cantabria, 101A, 39200 Reinosa, Cantabria</a>
+</div>
+</div>
+<div class="location-item">
+<div class="location-icon">
+<i data-lucide="clock" width="20" height="20"></i>
+</div>
+<div class="location-text">
+<h3>Horario</h3>
+<p>Lunes a Sábado: 9:30 - 21:30</p>
+<p>Domingo: Cerrado</p>
+</div>
+</div>
+<div class="location-item">
+<div class="location-icon">
+<i data-lucide="phone" width="20" height="20"></i>
+</div>
+<div class="location-text">
+<h3>Teléfono</h3>
+<p>+34 942 941 541</p>
+</div>
+</div>
+</div>
+</div>
+<div class="map-container animate-fade-in animate-delay-3">
+<iframe
+src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2905.5!2d-4.1362!3d43.0031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd493b1234567890%3A0x1234567890abcdef!2sAv.%20Cantabria%2C%20101A%2C%2039200%20Reinosa%2C%20Cantabria!5e0!3m2!1ses!2ses!4v1234567890123!5m2!1ses!2ses"
+width="100%"
+height="450"
+style="border:0; border-radius:16px;"
+allowfullscreen=""
+loading="lazy"
+referrerpolicy="no-referrer-when-downgrade">
+</iframe>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer id="contacto">
+<div class="container">
+<div class="footer-content">
+<div class="footer-column">
+<h3>CHINA MARKET</h3>
+<p>Tu bazar chino de confianza en Reinosa, Cantabria. Ofrecemos una amplia variedad de productos de calidad a los mejores precios.</p>
+</div>
+<div class="footer-column">
+<h3>Enlaces Rápidos</h3>
+<ul class="footer-links">
+<li><a href="#inicio">Inicio</a></li>
+<li><a href="#secciones">Secciones</a></li>
+<li><a href="#ubicacion">Ubicación</a></li>
+<li><a href="#contacto">Contacto</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h3>Contacto</h3>
+<p><i data-lucide="map-pin" width="18" height="18"></i> Av. Cantabria, 101A, 39200 Reinosa, Cantabria</p>
+<p><i data-lucide="phone" width="18" height="18"></i> +34 942 941 541</p>
+<p><i data-lucide="clock" width="18" height="18"></i> Lunes a Sábado: 9:30 - 21:30<br>Domingo: Cerrado</p>
+</div>
+</div>
+<!-- Redes Sociales -->
+<div class="social-media" style="display: flex; justify-content: center; gap: 30px; margin: 40px 0 20px 0;">
+<a href="https://www.facebook.com/profile.php?id=61568017347497&locale=es_ES" 
+   target="_blank" 
+   rel="noopener noreferrer"
+   class="social-icon facebook"
+   style="width: 60px; height: 60px; border-radius: 50%; background: #1877F2; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease-out; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-decoration: none;">
+<i data-lucide="facebook" style="color: white; width: 28px; height: 28px;"></i>
+</a>
+<a href="https://www.instagram.com/chinamarket1688/" 
+   target="_blank" 
+   rel="noopener noreferrer"
+   class="social-icon instagram"
+   style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease-out; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-decoration: none;">
+<i data-lucide="instagram" style="color: white; width: 28px; height: 28px;"></i>
+</a>
+</div>
+<div class="copyright">
+<p>© 2026 <strong>CHINA MARKET</strong>. Todos los derechos reservados. Tu bazar chino de confianza en Reinosa, Cantabria</p>
+</div>
+</div>
+</footer>
+<script>
+// Inicializar Lucide Icons
+lucide.createIcons();
+// Animación de carga progresiva
+document.addEventListener('DOMContentLoaded', function() {
+// Header scroll effect
+window.addEventListener('scroll', function() {
+const header = document.querySelector('header');
+if (window.scrollY > 100) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+// Mobile menu toggle
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.querySelector('.nav-links');
+hamburger.addEventListener('click', function() {
+navLinks.classList.toggle('active');
+hamburger.innerHTML = navLinks.classList.contains('active') ?
+'<i data-lucide="x" width="24" height="24"></i>' :
+'<i data-lucide="menu" width="24" height="24"></i>';
+lucide.createIcons();
+});
+// Close mobile menu when clicking a link
+document.querySelectorAll('.nav-links a').forEach(link => {
+link.addEventListener('click', function() {
+navLinks.classList.remove('active');
+hamburger.innerHTML = '<i data-lucide="menu" width="24" height="24"></i>';
+lucide.createIcons();
+});
+});
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+anchor.addEventListener('click', function(e) {
+e.preventDefault();
+const targetId = this.getAttribute('href');
+if(targetId === '#') return;
+const targetElement = document.querySelector(targetId);
+if(targetElement) {
+window.scrollTo({
+top: targetElement.offsetTop - 80,
+behavior: 'smooth'
+});
+}
+});
+});
+});
+</script>
+</body>
+</html>
