@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 视口优化 - 修复手机显示问题 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>CHINA MARKET | Tu bazar chino de confianza</title>
 <!-- Fuentes -->
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,11 +32,7 @@
 --border-radius-lg: 24px;
 --border-radius-xl: 32px;
 }
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
+/* 防止横向滚动 - 手机端修复 */
 body {
 font-family: 'Nunito', 'Quicksand', sans-serif;
 background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -43,54 +40,20 @@ color: var(--primary-gray);
 line-height: 1.6;
 overflow-x: hidden;
 background-attachment: fixed;
+width: 100%;
 }
-/* Animaciones de carga */
-@keyframes fadeInUp {
-from {
-opacity: 0;
-transform: translateY(30px);
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+max-width: 100%;
 }
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-fade-in {
-animation: fadeInUp 0.6s ease-out forwards;
-}
-.animate-delay-1 { animation-delay: 0.1s; }
-.animate-delay-2 { animation-delay: 0.2s; }
-.animate-delay-3 { animation-delay: 0.3s; }
-.animate-delay-4 { animation-delay: 0.4s; }
-.animate-delay-5 { animation-delay: 0.5s; }
-.animate-delay-6 { animation-delay: 0.6s; }
-.animate-delay-7 { animation-delay: 0.7s; }
-.animate-delay-8 { animation-delay: 0.8s; }
-.animate-delay-9 { animation-delay: 0.9s; }
-/* Heartbeat animation */
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  14% { transform: scale(1.2); }
-  28% { transform: scale(1); }
-  42% { transform: scale(1.2); }
-  70% { transform: scale(1); }
-}
-/* Scroll animation for banner */
-@keyframes scroll-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-/* Social media hover effect */
-.social-icon:hover {
-  transform: scale(1.2) translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-/* Estilos globales */
 .container {
-width: 90%;
+width: 100%;
 max-width: 1400px;
 margin: 0 auto;
-padding: 0 20px;
+padding: 0 15px; /* 确保有内边距 */
+box-sizing: border-box;
 }
 section {
 padding: 100px 0;
@@ -155,6 +118,7 @@ text-decoration: none;
 display: flex;
 align-items: center;
 transition: var(--transition);
+white-space: nowrap;
 }
 .logo:hover {
 color: var(--primary-gold);
@@ -567,7 +531,7 @@ opacity: 0.8;
 .copyright strong {
 color: var(--primary-gold);
 }
-/* Responsive */
+/* Responsive - 手机端全面修复 */
 @media (max-width: 992px) {
 .location-container {
 grid-template-columns: 1fr;
@@ -580,6 +544,12 @@ font-size: 3.8rem;
 }
 }
 @media (max-width: 768px) {
+/* 店名标题修复 */
+.logo {
+font-size: 1.6rem;
+white-space: nowrap;
+overflow: visible;
+}
 .hamburger {
 display: block;
 }
@@ -590,7 +560,8 @@ right: -100%;
 flex-direction: column;
 background: var(--glass-bg);
 backdrop-filter: blur(10px);
-width: 80%;
+width: 85%;
+max-width: 350px;
 height: calc(100vh - 80px);
 padding: 40px 0;
 transition: var(--transition);
@@ -604,6 +575,10 @@ right: 0;
 }
 .nav-links li {
 margin: 0 0 25px 0;
+}
+.nav-links a {
+padding: 15px 20px;
+font-size: 1.1rem;
 }
 .hero h1 {
 font-size: 3.2rem;
@@ -626,14 +601,98 @@ padding: 70px 0;
 .section-title {
 font-size: 2.2rem;
 }
-.modal-content {
-width: 95%;
-max-height: 85vh;
+/* 促销区修复 */
+.offers .container > div {
+padding: 40px 20px !important;
+}
+.offers .container > div h2 {
+font-size: 32px !important;
+padding: 0 10px !important;
+}
+.offers .container > div > div:nth-child(2) {
+width: 95% !important;
+height: 50px !important;
+margin: 20px auto !important;
+}
+.offers .container > div > div:nth-child(2) div {
+font-size: 16px !important;
+}
+/* 产品卡片修复 */
+.sections-grid {
+grid-template-columns: 1fr;
+gap: 20px;
+padding: 0 10px;
+}
+.section-card {
+margin: 0 auto;
+max-width: 100%;
+width: calc(100% - 20px);
+}
+.section-img {
+height: 180px;
+}
+.section-content {
+padding: 20px 15px;
+}
+.section-card h3 {
+font-size: 1.4rem;
+}
+/* 地址和地图修复 */
+.location-container {
+padding: 0 10px;
+}
+.map-container {
+height: 300px;
+margin-top: 20px;
+width: calc(100% - 20px);
+margin-left: 10px;
+margin-right: 10px;
+}
+.location-info h2 {
+font-size: 2rem;
+}
+/* Footer修复 */
+footer {
+padding: 50px 15px 20px;
+}
+.footer-content {
+gap: 30px;
+}
+.footer-column h3 {
+font-size: 1.3rem;
+}
+.footer-column p {
+font-size: 0.95rem;
+word-break: break-word;
+}
+/* 心跳动画幅度减小 */
+@keyframes heartbeat {
+0%, 100% { transform: scale(1); }
+14% { transform: scale(1.1); }
+28% { transform: scale(1); }
+42% { transform: scale(1.1); }
+70% { transform: scale(1); }
+}
+/* 产品卡片悬停效果改小 */
+.section-card:hover {
+transform: translateY(-5px);
+}
+/* 加快动画速度 */
+.animate-fade-in {
+animation-duration: 0.3s;
 }
 }
 @media (max-width: 480px) {
+/* Hero区标题修复 */
 .hero h1 {
-font-size: 2.8rem;
+font-size: 2.2rem;
+line-height: 1.2;
+padding: 0 15px;
+word-wrap: break-word;
+}
+.hero p {
+font-size: 1.2rem;
+padding: 0 15px;
 }
 .section-title {
 font-size: 2rem;
@@ -648,7 +707,40 @@ padding: 25px 15px;
 font-size: 2.3rem;
 }
 .map-container {
-height: 350px;
+height: 280px;
+}
+/* 社交媒体图标修复 */
+.social-media {
+gap: 20px;
+margin: 30px 0 15px 0;
+}
+.social-media a {
+width: 50px !important;
+height: 50px !important;
+}
+.social-media i {
+width: 24px !important;
+height: 24px !important;
+}
+}
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+/* 移动设备上移除悬停效果 */
+.section-card:hover {
+transform: none;
+}
+/* 改用触摸反馈 */
+.section-card:active {
+transform: scale(0.98);
+transition: transform 0.1s;
+}
+}
+/* 性能优化 - 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+* {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
 }
 }
 </style>
