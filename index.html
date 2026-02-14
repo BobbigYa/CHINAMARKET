@@ -531,7 +531,7 @@ opacity: 0.8;
 .copyright strong {
 color: var(--primary-gold);
 }
-/* 滚动横幅动画 - 新增修复 */
+/* 心跳动画 - 保留 */
 @keyframes heartbeat {
 0%, 100% { transform: scale(1); }
 14% { transform: scale(1.2); }
@@ -548,88 +548,86 @@ color: var(--primary-gold);
 70% { -webkit-transform: scale(1); }
 }
 
-@keyframes scroll-left {
-0% {
-transform: translateX(100%);
-}
-100% {
-transform: translateX(-100%);
-}
+/* 三行弹幕动画 - 新增 */
+@keyframes scroll-right-to-left {
+0% { transform: translateX(100%); }
+100% { transform: translateX(-100%); }
 }
 
-@-webkit-keyframes scroll-left {
-0% {
--webkit-transform: translateX(100%);
-}
-100% {
--webkit-transform: translateX(-100%);
-}
+@keyframes scroll-left-to-right {
+0% { transform: translateX(-100%); }
+100% { transform: translateX(100%); }
 }
 
-@-moz-keyframes scroll-left {
-0% {
--moz-transform: translateX(100%);
-}
-100% {
--moz-transform: translateX(-100%);
-}
+@-webkit-keyframes scroll-right-to-left {
+0% { -webkit-transform: translateX(100%); }
+100% { -webkit-transform: translateX(-100%); }
 }
 
-/* 滚动横幅样式 */
+@-webkit-keyframes scroll-left-to-right {
+0% { -webkit-transform: translateX(-100%); }
+100% { -webkit-transform: translateX(100%); }
+}
+
+/* 三行弹幕样式 */
 .scroll-banner {
-width: 90%;
-height: 80px;
+width: 95%;
+height: 150px;
 background: rgba(255, 255, 255, 0.2);
-border-radius: 40px;
+border-radius: 20px;
 margin: 30px auto;
 overflow: hidden;
 position: relative;
 border: 2px solid rgba(255,255,255,0.4);
+display: flex;
+flex-direction: column;
+justify-content: space-evenly;
+padding: 10px 0;
 box-shadow: inset 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.scroll-row {
+width: 100%;
+height: 40px;
+overflow: hidden;
+position: relative;
 display: flex;
 align-items: center;
 }
 
-.scroll-banner::before,
-.scroll-banner::after {
-content: '';
-position: absolute;
-top: 0;
-width: 100px;
-height: 100%;
-z-index: 2;
-pointer-events: none;
-}
-
-.scroll-banner::before {
-left: 0;
-background: linear-gradient(to right, rgba(193,30,58,1) 0%, transparent 100%);
-}
-
-.scroll-banner::after {
-right: 0;
-background: linear-gradient(to left, rgba(193,30,58,1) 0%, transparent 100%);
-}
-
-.scroll-content {
+.scroll-text {
 display: flex;
 align-items: center;
-height: 100%;
 white-space: nowrap;
 position: absolute;
-animation: scroll-left 15s linear infinite;
--webkit-animation: scroll-left 15s linear infinite;
--moz-animation: scroll-left 15s linear infinite;
+animation-timing-function: linear;
+-webkit-animation-timing-function: linear;
 }
 
-.scroll-content span {
-padding: 0 30px;
-font-size: 26px;
+.scroll-text span {
+padding: 0 50px;
+font-size: 22px;
 font-weight: 700;
 color: white;
 text-transform: uppercase;
 letter-spacing: 1px;
 text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 三行不同速度和方向 */
+.row-1 .scroll-text {
+animation: scroll-right-to-left 12s linear infinite;
+-webkit-animation: scroll-right-to-left 12s linear infinite;
+}
+
+.row-2 .scroll-text {
+animation: scroll-left-to-right 15s linear infinite;
+-webkit-animation: scroll-left-to-right 15s linear infinite;
+}
+
+.row-3 .scroll-text {
+animation: scroll-right-to-left 18s linear infinite;
+-webkit-animation: scroll-right-to-left 18s linear infinite;
 }
 
 /* Responsive - 手机端全面修复 */
@@ -710,15 +708,34 @@ padding: 40px 20px !important;
 font-size: 32px !important;
 padding: 0 10px !important;
 }
-/* 滚动横幅手机端调整 */
+/* 三行弹幕手机端调整 */
 .scroll-banner {
-width: 95%;
-height: 60px;
-border-radius: 30px;
+height: 110px;
+width: 98%;
+margin: 20px auto;
+padding: 8px 0;
+border-radius: 15px;
 }
-.scroll-content span {
-font-size: 18px;
+.scroll-row {
+height: 30px;
+}
+.scroll-text span {
+font-size: 14px;
 padding: 0 20px;
+letter-spacing: 0.5px;
+}
+/* 手机上动画稍慢，更流畅 */
+.row-1 .scroll-text {
+animation-duration: 15s;
+-webkit-animation-duration: 15s;
+}
+.row-2 .scroll-text {
+animation-duration: 18s;
+-webkit-animation-duration: 18s;
+}
+.row-3 .scroll-text {
+animation-duration: 20s;
+-webkit-animation-duration: 20s;
 }
 /* 产品卡片修复 */
 .sections-grid {
@@ -812,6 +829,17 @@ font-size: 2.3rem;
 .map-container {
 height: 280px;
 }
+/* 三行弹幕手机端调整 */
+.scroll-banner {
+height: 100px;
+}
+.scroll-row {
+height: 28px;
+}
+.scroll-text span {
+font-size: 12px;
+padding: 0 15px;
+}
 /* 社交媒体图标修复 */
 .social-media {
 gap: 20px;
@@ -876,28 +904,41 @@ CHINA MARKET
 <a href="#ubicacion" class="cta-button secondary">Visítanos</a>
 </div>
 </section>
-<!-- Ofertas Especiales - 滚动横幅已修复 -->
+<!-- Ofertas Especiales - 三行弹幕效果 -->
 <section class="offers" id="ofertas">
 <div class="container">
 <div style="background: linear-gradient(135deg, #C41E3A 0%, #E63946 100%); padding: 50px 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(220, 20, 60, 0.3);">
 <h2 style="font-size: 56px; color: white; text-align: center; margin-bottom: 30px; animation: heartbeat 1.5s ease-in-out infinite; font-weight: 800; letter-spacing: -1px;">¡REBAJAS DE 15%!</h2>
+<!-- 三行弹幕 -->
 <div class="scroll-banner">
-<div class="scroll-content">
+<!-- 第一行：从右向左，快速 -->
+<div class="scroll-row row-1">
+<div class="scroll-text">
 <span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
 <span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
 <span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
 <span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
-<span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
-<span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
-<span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
-<span>⭐</span>
-<span>TODOS LOS PRODUCTOS 15% DE DESCUENTO</span>
+</div>
+</div>
+<!-- 第二行：从左向右，中速 -->
+<div class="scroll-row row-2">
+<div class="scroll-text">
+<span>15% EN TODO</span>
+<span>15% EN TODO</span>
+<span>15% EN TODO</span>
+<span>15% EN TODO</span>
+<span>15% EN TODO</span>
+<span>15% EN TODO</span>
+</div>
+</div>
+<!-- 第三行：从右向左，慢速 -->
+<div class="scroll-row row-3">
+<div class="scroll-text">
+<span>REBAJAS EN TODA LA TIENDA</span>
+<span>REBAJAS EN TODA LA TIENDA</span>
+<span>REBAJAS EN TODA LA TIENDA</span>
+<span>REBAJAS EN TODA LA TIENDA</span>
+</div>
 </div>
 </div>
 </div>
