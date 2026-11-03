@@ -99,6 +99,11 @@ public sealed class AuthenticationService : IAuthenticationService
             return AuthResult.Failure(AuthError.PasswordRequired);
         }
 
+        if (password.Length > PasswordPolicy.MaximumLength)
+        {
+            return AuthResult.Failure(AuthError.PasswordTooLong);
+        }
+
         try
         {
             var credential = await _store.GetCredentialAsync(cancellationToken);
@@ -155,6 +160,11 @@ public sealed class AuthenticationService : IAuthenticationService
         if (string.IsNullOrEmpty(currentPassword))
         {
             return AuthResult.Failure(AuthError.PasswordRequired);
+        }
+
+        if (currentPassword.Length > PasswordPolicy.MaximumLength)
+        {
+            return AuthResult.Failure(AuthError.PasswordTooLong);
         }
 
         var validationError = PasswordPolicy.Validate(newPassword, confirmation);

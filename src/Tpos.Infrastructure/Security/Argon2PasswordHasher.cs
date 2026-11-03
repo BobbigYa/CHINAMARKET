@@ -38,6 +38,10 @@ public sealed class Argon2PasswordHasher : IPasswordHasher
     {
         ArgumentException.ThrowIfNullOrEmpty(password);
         ArgumentException.ThrowIfNullOrEmpty(encodedHash);
+        if (encodedHash.Length > 512)
+        {
+            throw new InvalidDataException("密码哈希长度超出允许范围。");
+        }
 
         var parsed = Parse(encodedHash);
         var actualHash = DeriveHash(password, parsed.Salt, parsed.Parameters);
