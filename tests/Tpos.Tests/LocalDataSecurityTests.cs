@@ -23,11 +23,11 @@ public sealed class LocalDataSecurityTests
             Assert.True(directoryAcl.AreAccessRulesProtected);
             Assert.True(fileAcl.AreAccessRulesProtected);
 
-            var currentUser = WindowsIdentity.GetCurrent().User;
-            Assert.NotNull(currentUser);
-            var expected = new[]
+            var currentUser = WindowsIdentity.GetCurrent().User ??
+                throw new InvalidOperationException("无法确定当前 Windows 用户。");
+            var expected = new SecurityIdentifier[]
             {
-                currentUser.Value,
+                currentUser,
                 new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null),
                 new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null)
             };
