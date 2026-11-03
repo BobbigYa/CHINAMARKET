@@ -8,6 +8,7 @@
 
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="49" />
+        <Setter Property="Padding" Value="18,0" />
         <Setter Property="Foreground" Value="#172128" />
         <Setter Property="Background" Value="#DFC18B" />
         <Setter Property="BorderBrush" Value="#66FFFFFF" />
@@ -23,6 +24,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="10"
+                            Padding="{TemplateBinding Padding}"
                             RenderTransformOrigin="0.5,0.5">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="16" ShadowDepth="5" Opacity="0.18" Color="#000000" />
@@ -48,9 +50,6 @@
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ButtonBorder" Property="RenderTransform.Y" Value="0" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.58" />

@@ -8,9 +8,9 @@ public sealed class Argon2PasswordHasherTests
     private const string SamplePassword = "Test-Only-Password-2026!";
 
     [Fact]
-    public void HashPassword_UsesArgon2idRandomSaltAndNeverStoresPlaintext()
+    public async Task HashPassword_UsesArgon2idRandomSaltAndNeverStoresPlaintext()
     {
-        using var harness = TestHarness.CreateAsync().GetAwaiter().GetResult();
+        using var harness = await TestHarness.CreateAsync();
 
         var first = harness.Hasher.HashPassword(SamplePassword);
         var second = harness.Hasher.HashPassword(SamplePassword);
@@ -23,9 +23,9 @@ public sealed class Argon2PasswordHasherTests
     }
 
     [Fact]
-    public void VerifyPassword_MalformedHash_ThrowsControlledInvalidDataException()
+    public async Task VerifyPassword_MalformedHash_ThrowsControlledInvalidDataException()
     {
-        using var harness = TestHarness.CreateAsync().GetAwaiter().GetResult();
+        using var harness = await TestHarness.CreateAsync();
 
         Assert.Throws<InvalidDataException>(
             () => harness.Hasher.VerifyPassword(SamplePassword, "not-a-valid-hash"));

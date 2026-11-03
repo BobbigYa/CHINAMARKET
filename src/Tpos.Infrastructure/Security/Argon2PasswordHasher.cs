@@ -49,6 +49,7 @@ public sealed class Argon2PasswordHasher : IPasswordHasher
         }
         finally
         {
+            CryptographicOperations.ZeroMemory(actualHash);
             CryptographicOperations.ZeroMemory(parsed.ExpectedHash);
         }
     }
