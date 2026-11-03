@@ -2,6 +2,15 @@ name: TPOS Windows build and authentication tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - arena/9f0e0f24-chinamarket
+    paths:
+      - "Tpos.sln"
+      - "Directory.Build.props"
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/tpos-windows-tests.yml"
 
 permissions:
   contents: read
