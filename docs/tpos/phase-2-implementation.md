@@ -1,5 +1,7 @@
 # TPOS^ — 第二阶段真实密码登录：实现与测试报告
 
+> **最终验收和发布结果以 [`phase-2-final-acceptance.md`](./phase-2-final-acceptance.md) 为准。** 最终报告已更新为 12 项自动化测试、11 项真实 EXE 自动化检查及 self-contained 单文件发布；本文件保留第二阶段实现过程记录。
+>
 > 报告日期：2026-11-03
 > 产品代码测试提交：`c61375f4e8ff3759b7a7a1d3b6a80ef1af421585`
 > Windows 验收运行：[GitHub Actions #41723788329](https://github.com/BobbigYa/CHINAMARKET/actions/runs/41723788329)
