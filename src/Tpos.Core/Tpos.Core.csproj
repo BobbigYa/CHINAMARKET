@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Tpos.Core</RootNamespace>
+    <AssemblyName>Tpos.Core</AssemblyName>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,55 @@
+<Window x:Class="Tpos.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:controls="clr-namespace:Tpos.Desktop.Controls"
+        xmlns:views="clr-namespace:Tpos.Desktop.Views"
+        xmlns:viewModels="clr-namespace:Tpos.Desktop.ViewModels"
+        Title="TPOS^"
+        Width="1100" Height="700" MinWidth="760" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        Background="#0B1822"
+        FontFamily="Segoe UI Variable, Segoe UI, Microsoft YaHei UI"
+        TextOptions.TextFormattingMode="Display">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0" GlassFrameThickness="0" CornerRadius="18" UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModels:AuthenticationViewModel}">
+            <views:AuthenticationView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="#3D060F16" BorderBrush="#11000000" BorderThickness="0,0,0,1" MouseLeftButtonDown="TitleBar_OnMouseLeftButtonDown">
+            <DockPanel LastChildFill="False">
+                <StackPanel Orientation="Horizontal" Margin="18,0,0,0" DockPanel.Dock="Left">
+                    <Border Width="20" Height="20" CornerRadius="6" Background="#D9BA84">
+                        <TextBlock Text="T" Foreground="#142029" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="TPOS^" Margin="9,0,0,0" VerticalAlignment="Center" Foreground="#B9C5CC" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Minimize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Minimize]}">
+                        <TextBlock Text="—" FontSize="13" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Maximize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Maximize]}">
+                        <TextBlock Text="▢" FontSize="15" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Close_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Close]}">
+                        <TextBlock Text="×" FontSize="20" VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+    </Grid>
+</Window>
