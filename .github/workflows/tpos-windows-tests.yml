@@ -128,7 +128,15 @@ jobs:
       - name: Inspect real EXE database and production parameters
         if: success()
         shell: pwsh
-        run: python scripts/inspect_auth_database.py "$env:ProgramData\Tpos\Security\tpos-auth.db"
+        run: |
+          $inspectionOutput = & python scripts/inspect_auth_database.py "$env:ProgramData\Tpos\Security\tpos-auth.db" 2>&1
+          $inspectionExitCode = $LASTEXITCODE
+          $inspectionOutput | ForEach-Object { Write-Host $_ }
+          if ($inspectionExitCode -ne 0) {
+            $detail = ($inspectionOutput | Select-Object -Last 1) -replace "`r|`n", " "
+            Write-Host "::error title=TPOS 数据库核验失败::$detail"
+            exit $inspectionExitCode
+          }
 
       - name: Create publish file manifest and SHA-256
         if: success()
