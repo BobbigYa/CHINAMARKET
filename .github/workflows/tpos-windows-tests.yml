@@ -89,6 +89,24 @@ jobs:
             Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| $name | $outcome | $duration |"
           }
 
+      - name: Publish offline and session test evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $trx = Get-ChildItem TestResults -Filter *.trx -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $trx) { exit 0 }
+          [xml]$xml = Get-Content $trx.FullName
+          $tests = $xml.SelectNodes("//*[local-name()='UnitTestResult']") |
+            Where-Object { $_.testName -match "OfflineAuthenticationTests|SessionManagerTests" }
+          if ($tests.Count -ne 2) {
+            Write-Host "::error title=TPOS 测试证据::未找到完整的离线和会话测试结果。"
+            exit 1
+          }
+          foreach ($test in $tests) {
+            $level = if ($test.outcome -eq "Passed") { "notice" } else { "error" }
+            Write-Host "::$level title=TPOS 离线与会话证据::$($test.testName) — $($test.outcome) — $($test.duration)"
+          }
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
