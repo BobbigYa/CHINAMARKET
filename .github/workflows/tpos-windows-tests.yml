@@ -122,7 +122,8 @@ jobs:
       - name: Run published EXE UI acceptance
         if: success()
         shell: pwsh
-        run: & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
+        run: |
+          & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
 
       - name: Inspect real EXE database and production parameters
         if: success()
