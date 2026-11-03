@@ -129,6 +129,7 @@ jobs:
         if: success()
         shell: pwsh
         run: |
+          $env:PYTHONIOENCODING = "utf-8"
           $inspectionOutput = & python scripts/inspect_auth_database.py "$env:ProgramData\Tpos\Security\tpos-auth.db" 2>&1
           $inspectionExitCode = $LASTEXITCODE
           $inspectionOutput | ForEach-Object { Write-Host $_ }
