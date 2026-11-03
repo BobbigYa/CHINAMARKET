@@ -44,7 +44,7 @@
                     <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Maximize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Maximize]}">
                         <TextBlock Text="▢" FontSize="15" VerticalAlignment="Center" />
                     </Button>
-                    <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Close_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Close]}">
+                    <Button AutomationProperties.AutomationId="CloseWindowButton" Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Close_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Close]}">
                         <TextBlock Text="×" FontSize="20" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>

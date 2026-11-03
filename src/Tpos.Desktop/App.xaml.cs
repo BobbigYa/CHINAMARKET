@@ -44,8 +44,11 @@ public partial class App : Application
                 "Tpos",
                 "Security");
             var databasePath = Path.Combine(dataDirectory, "tpos-auth.db");
+            LocalDataSecurity.SecureDataDirectory(dataDirectory);
+            LocalDataSecurity.SecureExistingDatabaseFiles(dataDirectory);
             var store = new SqliteCredentialStore(databasePath);
             await store.InitializeAsync();
+            LocalDataSecurity.SecureExistingDatabaseFiles(dataDirectory);
 
             var authenticationService = new AuthenticationService(
                 store,

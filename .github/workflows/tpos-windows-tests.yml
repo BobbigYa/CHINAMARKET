@@ -115,14 +115,51 @@ jobs:
           path: TestResults/
           retention-days: 14
 
-      - name: Publish Windows x64 test build
+      - name: Publish self-contained Windows x64 single-file EXE
         if: success()
-        run: dotnet publish src/Tpos.Desktop/Tpos.Desktop.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/Tpos-win-x64
+        run: dotnet publish src/Tpos.Desktop/Tpos.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/Tpos-win-x64-self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false
 
-      - name: Upload Windows x64 test build
+      - name: Run published EXE UI acceptance
+        if: success()
+        shell: pwsh
+        run: & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
+
+      - name: Inspect real EXE database and production parameters
+        if: success()
+        shell: pwsh
+        run: python scripts/inspect_auth_database.py "$env:ProgramData\Tpos\Security\tpos-auth.db"
+
+      - name: Create publish file manifest and SHA-256
+        if: success()
+        shell: pwsh
+        run: |
+          $publishDirectory = "artifacts/Tpos-win-x64-self-contained"
+          $exe = Join-Path $publishDirectory "Tpos.Desktop.exe"
+          if (-not (Test-Path $exe)) { throw "单文件 EXE 未生成。" }
+          $manifest = Get-ChildItem $publishDirectory -File | ForEach-Object {
+            $hash = Get-FileHash $_.FullName -Algorithm SHA256
+            [pscustomobject]@{ Name = $_.Name; Bytes = $_.Length; SHA256 = $hash.Hash }
+          }
+          $manifest | ConvertTo-Json -Depth 3 | Set-Content "artifacts/publish-manifest.json" -Encoding UTF8
+          $exeInfo = Get-Item $exe
+          $exeHash = (Get-FileHash $exe -Algorithm SHA256).Hash
+          Write-Host "::notice title=TPOS self-contained EXE::$($exeInfo.Name)；$($exeInfo.Length) 字节；SHA-256 $exeHash"
+
+      - name: Upload Windows x64 self-contained EXE
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: tpos-win-x64-test-build
-          path: artifacts/Tpos-win-x64/
+          name: tpos-win-x64-self-contained
+          path: artifacts/Tpos-win-x64-self-contained/
+          retention-days: 14
+
+      - name: Upload acceptance evidence and publish manifest
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-acceptance-evidence
+          path: |
+            artifacts/ui-smoke-results.json
+            artifacts/database-inspection.json
+            artifacts/publish-manifest.json
           retention-days: 14
