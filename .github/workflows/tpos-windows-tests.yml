@@ -37,8 +37,57 @@ jobs:
       - name: Build Release
         run: dotnet build Tpos.sln --configuration Release --no-restore
 
-      - name: Run authentication and SQLite integration tests
-        run: dotnet test tests/Tpos.Tests/Tpos.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=tpos-tests.trx" --results-directory TestResults
+      - name: Run tests with test-process outbound network blocked
+        shell: pwsh
+        run: |
+          $ruleNames = @()
+          $programs = @((Get-Command dotnet).Source)
+          $programs += Get-ChildItem tests/Tpos.Tests/bin/Release -Recurse -Include testhost.exe,testhost.x86.exe |
+            ForEach-Object { $_.FullName }
+          $programs = $programs | Select-Object -Unique
+          try {
+            $index = 0
+            foreach ($program in $programs) {
+              $index++
+              $ruleName = "TPOS offline test $PID $index"
+              New-NetFirewallRule -DisplayName $ruleName -Direction Outbound -Action Block -Program $program -Profile Any -ErrorAction Stop | Out-Null
+              $ruleNames += $ruleName
+            }
+            $env:TPOS_OFFLINE_TEST = "1"
+            & dotnet test tests/Tpos.Tests/Tpos.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=tpos-tests.trx" --results-directory TestResults
+            $testExitCode = $LASTEXITCODE
+          }
+          finally {
+            foreach ($ruleName in $ruleNames) {
+              Remove-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue
+            }
+          }
+          exit $testExitCode
+
+      - name: Publish individual test results
+        if: always()
+        shell: pwsh
+        run: |
+          $trx = Get-ChildItem TestResults -Filter *.trx -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $trx) {
+            Write-Host "No TRX file was produced."
+            exit 0
+          }
+          [xml]$xml = Get-Content $trx.FullName
+          $counters = $xml.SelectSingleNode("//*[local-name()='Counters']")
+          $summary = "总计 $($counters.total)；通过 $($counters.passed)；失败 $($counters.failed)；跳过 $($counters.notExecuted)"
+          Write-Host "::notice title=TPOS 测试汇总::$summary"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "## TPOS 实际测试结果`n"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "**$summary**`n"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| 测试 | 结果 | 耗时 |`n|---|---|---|"
+          foreach ($test in $xml.SelectNodes("//*[local-name()='UnitTestResult']")) {
+            $name = $test.testName
+            $outcome = $test.outcome
+            $duration = $test.duration
+            $level = if ($outcome -eq "Passed") { "notice" } else { "error" }
+            Write-Host "::$level title=TPOS 单项测试::$name — $outcome — $duration"
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| $name | $outcome | $duration |"
+          }
 
       - name: Upload test results
         if: always()
@@ -46,4 +95,16 @@ jobs:
         with:
           name: tpos-windows-test-results
           path: TestResults/
+          retention-days: 14
+
+      - name: Publish Windows x64 test build
+        if: success()
+        run: dotnet publish src/Tpos.Desktop/Tpos.Desktop.csproj --configuration Release --runtime win-x64 --self-contained false --output artifacts/Tpos-win-x64
+
+      - name: Upload Windows x64 test build
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-win-x64-test-build
+          path: artifacts/Tpos-win-x64/
           retention-days: 14
