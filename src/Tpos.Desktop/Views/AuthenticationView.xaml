@@ -17,46 +17,35 @@
     </UserControl.Resources>
     <Grid>
         <controls:AuroraBackground />
-        <Grid MaxWidth="1080" Margin="48,30" HorizontalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.12*" />
-                <ColumnDefinition Width="0.88*" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,40,0">
-                <StackPanel Orientation="Horizontal">
-                    <Border x:Name="BrandMark" Width="66" Height="66" CornerRadius="20" BorderThickness="1" BorderBrush="#47FFFFFF" RenderTransformOrigin="0.5,0.5">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#EFD6A8" Offset="0" />
-                                <GradientStop Color="#C9A365" Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <Border.Effect><DropShadowEffect BlurRadius="22" ShadowDepth="9" Opacity="0.24" Color="#000000" /></Border.Effect>
-                        <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
-                        <TextBlock Text="T" Foreground="#142029" FontSize="35" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Margin="17,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="TPOS^" Foreground="#F7F8FA" FontSize="25" FontWeight="Bold">
-                            <TextBlock.Resources><Style TargetType="TextBlock"><Setter Property="TextBlock.FontFamily" Value="Segoe UI Variable" /></Style></TextBlock.Resources>
-                        </TextBlock>
-                        <TextBlock Text="RETAIL WORKSPACE" Foreground="#A8B6C0" FontSize="10" Margin="0,6,0,0" />
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Margin="0,52,0,0" MaxWidth="450">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                        <Border Width="26" Height="1" Background="#D9BA84" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[BrandKicker]}" Foreground="#EFD7A9" FontSize="12" FontWeight="SemiBold" Margin="10,0,0,0" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[BrandHeadline]}" Foreground="#F7F8FA" FontSize="44" FontWeight="SemiBold" LineHeight="58" TextWrapping="Wrap" />
-                    <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[BrandText]}" Foreground="#A9B7C0" FontSize="15" LineHeight="27" TextWrapping="Wrap" Margin="0,22,0,0" />
-                    <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                        <Path Data="M6,2 L1,4 L1,7 C1,11 3,14 6,16 C9,14 11,11 11,7 L11,4 Z M4,8 L5.5,9.5 L8.5,6" Stroke="#B7C6CD" StrokeThickness="1.2" Width="16" Height="16" Stretch="Uniform" />
-                        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[OfflineNote]}" Foreground="#91A3AE" FontSize="12" Margin="9,0,0,0" TextWrapping="Wrap" />
-                    </StackPanel>
-                </StackPanel>
+        <Grid Margin="24,12,24,22">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,12">
+                <Border x:Name="BrandMark"
+                        Width="68" Height="68"
+                        CornerRadius="20"
+                        BorderThickness="1"
+                        BorderBrush="#32FFFFFF"
+                        Background="#0EFFFFFF"
+                        RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+                    <Image Source="../Assets/TposLogo.png" Width="62" Height="62" />
+                </Border>
+                <TextBlock Text="TPOS^"
+                           Margin="16,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="#F7F8FA"
+                           FontSize="25"
+                           FontWeight="Bold" />
             </StackPanel>
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalFirst">
-                <ContentControl Content="{Binding CurrentForm}" VerticalAlignment="Center" />
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalContentAlignment="Center"
+                          PanningMode="VerticalFirst">
+                <ContentControl Content="{Binding CurrentForm}" HorizontalAlignment="Center" />
             </ScrollViewer>
         </Grid>
     </Grid>

@@ -37,8 +37,6 @@ public partial class LoginView
         }
     }
 
-    private async void Login_OnClick(object sender, RoutedEventArgs e) => await SubmitPasswordAsync();
-
     private async void Password_OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter)

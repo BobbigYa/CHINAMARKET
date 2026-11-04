@@ -221,6 +221,7 @@ try {
     $animationWatch = [Diagnostics.Stopwatch]::StartNew()
     for ($cycle = 1; $cycle -le 3; $cycle++) {
         Invoke-Button "MaximizeWindowButton"
+        $report.Gpu.Add((Get-GpuSample "第 $cycle 次最大化操作期间"))
         Start-Sleep -Milliseconds 700
         $state = [System.Windows.Automation.WindowPattern]$script:Window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
         if ($state.Current.WindowVisualState -ne [System.Windows.Automation.WindowVisualState]::Maximized) {
@@ -228,6 +229,7 @@ try {
         }
         if ($cycle -eq 1) { $report.Screenshots += Capture-Window "03-maximized" }
         Invoke-Button "MaximizeWindowButton"
+        $report.Gpu.Add((Get-GpuSample "第 $cycle 次恢复操作期间"))
         Start-Sleep -Milliseconds 700
         if ($state.Current.WindowVisualState -ne [System.Windows.Automation.WindowVisualState]::Normal) {
             throw "第 $cycle 次恢复未达到 Normal 状态。"
@@ -242,7 +244,7 @@ try {
         ElapsedSeconds = [math]::Round($animationWatch.Elapsed.TotalSeconds, 3)
         ProcessCpuSeconds = [math]::Round($animationCpu, 4)
         CpuPercentOfOneCore = [math]::Round(100 * $animationCpu / $animationWatch.Elapsed.TotalSeconds, 4)
-        Note = "包含三次最大化与恢复以及 UI Automation 操作，不是纯 GPU 基准。"
+        Note = "包含三次最大化与恢复、UI Automation 和 GPU 计数器采样，不是纯动画或纯 GPU 基准。"
     }
     $report.Gpu.Add((Get-GpuSample "最大化与恢复操作后"))
 

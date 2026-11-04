@@ -6,7 +6,13 @@
     <RootNamespace>Tpos.Desktop</RootNamespace>
     <AssemblyName>Tpos.Desktop</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\TposLogo.ico</ApplicationIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\TposLogo.png" />
+    <Resource Include="Assets\TposLogo.ico" />
+    <EmbeddedResource Include="THIRD-PARTY-NOTICES.txt" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tpos.Core\Tpos.Core.csproj" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />

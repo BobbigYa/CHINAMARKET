@@ -16,7 +16,7 @@
             <DoubleAnimation Storyboard.TargetName="OrbThree" Storyboard.TargetProperty="Opacity" From="0.45" To="0.85" Duration="0:0:20" />
         </Storyboard>
     </UserControl.Resources>
-    <Grid ClipToBounds="True" Background="#0B1822">
+    <Grid ClipToBounds="True" Background="Transparent">
         <Ellipse x:Name="OrbOne" Width="720" Height="720" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-270,-290,0,0">
             <Ellipse.Fill>
                 <RadialGradientBrush>

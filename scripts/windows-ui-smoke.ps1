@@ -74,6 +74,7 @@ function Enter-Password([string]$AutomationId, [string]$Password) {
     $element = Wait-Element $AutomationId
     $element.SetFocus()
     Start-Sleep -Milliseconds 150
+    [System.Windows.Forms.SendKeys]::SendWait("^a{DELETE}")
     [System.Windows.Forms.SendKeys]::SendWait($Password)
 }
 
@@ -102,10 +103,25 @@ function Close-Application([string]$EvidenceName) {
     $script:Window = $null
 }
 
+function Assert-PasswordReveal {
+    $started = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+    Enter-Password "LoginPassword" "UiTest-Password-2026!"
+    Invoke-Button "RevealPasswordButton"
+    $visible = Wait-Element "LoginVisiblePassword"
+    $valuePattern = [System.Windows.Automation.ValuePattern]$visible.GetCurrentPattern(
+        [System.Windows.Automation.ValuePattern]::Pattern)
+    if ($valuePattern.Current.Value -ne "UiTest-Password-2026!") {
+        throw "密码显示功能未保留输入内容。"
+    }
+    Invoke-Button "RevealPasswordButton"
+    Assert-ElementMissing "LoginVisiblePassword"
+    Add-Pass "密码显示与隐藏保持可用" $started
+}
+
 function Assert-WrongPassword {
     $started = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
     Enter-Password "LoginPassword" "UiTest-Wrong-Password!"
-    Invoke-Button "LoginSubmitButton"
+    [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
     $message = Wait-Element "LoginMessage"
     if ($message.Current.Name -notmatch "密码不正确") {
         throw "错误密码提示不符合预期：$($message.Current.Name)"
@@ -117,7 +133,7 @@ function Assert-WrongPassword {
 function Assert-CorrectPassword {
     $started = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
     Enter-Password "LoginPassword" "UiTest-Password-2026!"
-    Invoke-Button "LoginSubmitButton"
+    [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
     Wait-Element "DashboardView" | Out-Null
     Add-Pass "正确密码进入 Dashboard（生产 Argon2id 参数）" $started
 }
@@ -144,6 +160,7 @@ try {
     Wait-Element "LoginView" | Out-Null
     Add-Pass "首次初始化后返回登录页" $started
 
+    Assert-PasswordReveal
     Assert-WrongPassword
     Assert-CorrectPassword
     Assert-Logout
