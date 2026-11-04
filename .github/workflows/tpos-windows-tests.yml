@@ -1,0 +1,230 @@
+name: TPOS Windows build and authentication tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/9f0e0f24-chinamarket
+    paths:
+      - "Tpos.sln"
+      - "Directory.Build.props"
+      - "src/**"
+      - "tests/**"
+      - "scripts/**"
+      - ".github/workflows/tpos-windows-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Show SDK version
+        run: dotnet --info
+
+      - name: Restore dependencies
+        run: dotnet restore Tpos.sln
+
+      - name: Build Release
+        run: dotnet build Tpos.sln --configuration Release --no-restore
+
+      - name: Run tests with test-process outbound network blocked
+        shell: pwsh
+        run: |
+          $ruleNames = @()
+          $programs = @((Get-Command dotnet).Source)
+          $programs += Get-ChildItem tests/Tpos.Tests/bin/Release -Recurse -Include testhost.exe,testhost.x86.exe |
+            ForEach-Object { $_.FullName }
+          $programs = $programs | Select-Object -Unique
+          try {
+            $index = 0
+            foreach ($program in $programs) {
+              $index++
+              $ruleName = "TPOS offline test $PID $index"
+              New-NetFirewallRule -DisplayName $ruleName -Direction Outbound -Action Block -Program $program -Profile Any -ErrorAction Stop | Out-Null
+              $ruleNames += $ruleName
+            }
+            $env:TPOS_OFFLINE_TEST = "1"
+            & dotnet test tests/Tpos.Tests/Tpos.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=tpos-tests.trx" --results-directory TestResults
+            $testExitCode = $LASTEXITCODE
+          }
+          finally {
+            foreach ($ruleName in $ruleNames) {
+              Remove-NetFirewallRule -DisplayName $ruleName -ErrorAction SilentlyContinue
+            }
+          }
+          exit $testExitCode
+
+      - name: Publish individual test results
+        if: always()
+        shell: pwsh
+        run: |
+          $trx = Get-ChildItem TestResults -Filter *.trx -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $trx) {
+            Write-Host "No TRX file was produced."
+            exit 0
+          }
+          [xml]$xml = Get-Content $trx.FullName
+          $counters = $xml.SelectSingleNode("//*[local-name()='Counters']")
+          $summary = "总计 $($counters.total)；通过 $($counters.passed)；失败 $($counters.failed)；跳过 $($counters.notExecuted)"
+          Write-Host "::notice title=TPOS 测试汇总::$summary"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "## TPOS 实际测试结果`n"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "**$summary**`n"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| 测试 | 结果 | 耗时 |`n|---|---|---|"
+          foreach ($test in $xml.SelectNodes("//*[local-name()='UnitTestResult']")) {
+            $name = $test.testName
+            $outcome = $test.outcome
+            $duration = $test.duration
+            $level = if ($outcome -eq "Passed") { "notice" } else { "error" }
+            Write-Host "::$level title=TPOS 单项测试::$name — $outcome — $duration"
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| $name | $outcome | $duration |"
+          }
+
+      - name: Publish offline and session test evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $trx = Get-ChildItem TestResults -Filter *.trx -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $trx) { exit 0 }
+          [xml]$xml = Get-Content $trx.FullName
+          $tests = $xml.SelectNodes("//*[local-name()='UnitTestResult']") |
+            Where-Object { $_.testName -match "OfflineAuthenticationTests|SessionManagerTests" }
+          if ($tests.Count -ne 2) {
+            Write-Host "::error title=TPOS 测试证据::未找到完整的离线和会话测试结果。"
+            exit 1
+          }
+          foreach ($test in $tests) {
+            $level = if ($test.outcome -eq "Passed") { "notice" } else { "error" }
+            Write-Host "::$level title=TPOS 离线与会话证据::$($test.testName) — $($test.outcome) — $($test.duration)"
+          }
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-windows-test-results
+          path: TestResults/
+          retention-days: 14
+
+      - name: Publish self-contained Windows x64 single-file EXE
+        if: success()
+        run: dotnet publish src/Tpos.Desktop/Tpos.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/Tpos-win-x64-self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false
+
+      - name: Run published EXE UI acceptance
+        if: success()
+        shell: pwsh
+        run: |
+          & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
+
+      - name: Capture EXE screenshots and measure real resource usage
+        if: success()
+        shell: pwsh
+        run: |
+          & scripts/windows-visual-performance.ps1 `
+            -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" `
+            -OutputDirectory "artifacts/visual" `
+            -EvidenceLabel "${{ github.sha }}"
+
+      - name: Inspect real EXE database and production parameters
+        if: success()
+        shell: pwsh
+        run: |
+          $env:PYTHONIOENCODING = "utf-8"
+          $inspectionOutput = & python scripts/inspect_auth_database.py "$env:ProgramData\Tpos\Security\tpos-auth.db" 2>&1
+          $inspectionExitCode = $LASTEXITCODE
+          $inspectionOutput | ForEach-Object { Write-Host $_ }
+          if ($inspectionExitCode -ne 0) {
+            $detail = ($inspectionOutput | Select-Object -Last 1) -replace "`r|`n", " "
+            Write-Host "::error title=TPOS 数据库核验失败::$detail"
+            exit $inspectionExitCode
+          }
+
+      - name: Create publish file manifest and SHA-256
+        if: success()
+        shell: pwsh
+        run: |
+          $publishDirectory = "artifacts/Tpos-win-x64-self-contained"
+          $exe = Join-Path $publishDirectory "Tpos.Desktop.exe"
+          if (-not (Test-Path $exe)) { throw "单文件 EXE 未生成。" }
+          $manifest = Get-ChildItem $publishDirectory -File | ForEach-Object {
+            $hash = Get-FileHash $_.FullName -Algorithm SHA256
+            [pscustomobject]@{ Name = $_.Name; Bytes = $_.Length; SHA256 = $hash.Hash }
+          }
+          $manifest | ConvertTo-Json -Depth 3 | Set-Content "artifacts/publish-manifest.json" -Encoding UTF8
+          $exeInfo = Get-Item $exe
+          $exeHash = (Get-FileHash $exe -Algorithm SHA256).Hash
+          Write-Host "::notice title=TPOS self-contained EXE::$($exeInfo.Name)；$($exeInfo.Length) 字节；SHA-256 $exeHash"
+
+      - name: Upload Windows x64 self-contained EXE
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-win-x64-self-contained
+          path: artifacts/Tpos-win-x64-self-contained/
+          retention-days: 14
+
+      - name: Upload visual and performance evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-visual-performance
+          path: artifacts/visual/
+          retention-days: 14
+
+      - name: Upload acceptance evidence and publish manifest
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-acceptance-evidence
+          path: |
+            artifacts/ui-smoke-results.json
+            artifacts/database-inspection.json
+            artifacts/publish-manifest.json
+          retention-days: 14
+
+  legacy-window-compatibility:
+    needs: build-and-test
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish for legacy DWM validation
+        run: dotnet publish src/Tpos.Desktop/Tpos.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/Tpos-win-x64-self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false
+
+      - name: Run legacy Windows EXE authentication acceptance
+        shell: pwsh
+        run: |
+          & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
+
+      - name: Run legacy DWM window and resource acceptance
+        shell: pwsh
+        run: |
+          & scripts/windows-visual-performance.ps1 `
+            -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" `
+            -OutputDirectory "artifacts/visual" `
+            -EvidenceLabel "Windows Server 2022 ${{ github.sha }}"
+
+      - name: Upload legacy Windows visual evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-windows-server-2022-visual
+          path: artifacts/visual/
+          retention-days: 14

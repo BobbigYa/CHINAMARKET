@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>TPOS^ — 登录界面设计预览</title>
+  <style>
+    :root {
+      font-family: "Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+      color: #f7f8fa;
+      background: #071019;
+      font-synthesis: none;
+      --gold: #d9ba84;
+      --gold-light: #efd7a9;
+      --ink: #101a21;
+      --muted: #9caab6;
+      --line: rgba(255, 255, 255, .11);
+      --danger: #ffb4ab;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 18px 24px 24px;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(43, 89, 100, .2), transparent 32%),
+        #071019;
+    }
+
+    button, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--gold-light);
+      outline-offset: 3px;
+    }
+
+    .preview-bar {
+      width: min(1160px, 100%);
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: #b7c3cc;
+      font-size: 12px;
+    }
+
+    .preview-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      white-space: nowrap;
+    }
+
+    .preview-title::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(217, 186, 132, .1);
+    }
+
+    .state-picker { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .state-button {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 6px 10px;
+      color: #aeb9c2;
+      background: rgba(255, 255, 255, .035);
+      cursor: pointer;
+      transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .state-button:hover { color: white; border-color: rgba(255,255,255,.23); }
+    .state-button.active { color: #171c20; background: var(--gold); border-color: var(--gold); }
+
+    .app-shell {
+      position: relative;
+      isolation: isolate;
+      width: min(1160px, 100%);
+      min-height: 660px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 18px;
+      background: #0b1822;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .42), 0 2px 12px rgba(0, 0, 0, .3);
+    }
+
+    .background-layer { position: absolute; inset: 0; overflow: hidden; z-index: -2; }
+
+    .background-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to right, black, transparent 68%);
+    }
+
+    .orb {
+      position: absolute;
+      width: 720px;
+      height: 720px;
+      border-radius: 50%;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .orb-one {
+      left: -270px;
+      top: -290px;
+      background: radial-gradient(circle, rgba(48, 121, 129, .52) 0%, rgba(24, 76, 88, .22) 39%, transparent 70%);
+      animation: drift-one 22s ease-in-out infinite alternate;
+    }
+
+    .orb-two {
+      right: -330px;
+      bottom: -400px;
+      background: radial-gradient(circle, rgba(91, 72, 127, .35) 0%, rgba(47, 42, 85, .14) 42%, transparent 70%);
+      animation: drift-two 26s ease-in-out infinite alternate;
+    }
+
+    .orb-three {
+      width: 500px;
+      height: 500px;
+      left: 31%;
+      bottom: -350px;
+      background: radial-gradient(circle, rgba(193, 151, 85, .16), transparent 68%);
+      animation: drift-three 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift-one {
+      from { transform: translate3d(-18px, -10px, 0) scale(.96); }
+      to { transform: translate3d(90px, 55px, 0) scale(1.08); }
+    }
+    @keyframes drift-two {
+      from { transform: translate3d(30px, 20px, 0) scale(1.03); }
+      to { transform: translate3d(-85px, -48px, 0) scale(.94); }
+    }
+    @keyframes drift-three {
+      from { transform: translate3d(-30px, 0, 0); opacity: .6; }
+      to { transform: translate3d(70px, -35px, 0); opacity: 1; }
+    }
+
+    .titlebar {
+      height: 50px;
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,.065);
+      background: rgba(6, 15, 22, .24);
+      color: #b9c5cc;
+      font-size: 12px;
+      letter-spacing: .02em;
+    }
+
+    .window-brand { display: flex; align-items: center; gap: 9px; }
+    .window-brand-mark {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: #142029;
+      background: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .window-controls { margin-left: auto; height: 100%; display: flex; }
+    .window-control {
+      width: 48px;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: #92a1ab;
+    }
+    .window-control svg { width: 13px; height: 13px; }
+
+    .login-layout {
+      min-height: 608px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(390px, .85fr);
+      align-items: center;
+      gap: clamp(36px, 6vw, 86px);
+      padding: 54px clamp(46px, 6vw, 78px) 58px;
+    }
+
+    .brand-panel { min-width: 0; padding-bottom: 8px; }
+
+    .brand-lockup { display: flex; align-items: center; gap: 17px; }
+
+    .brand-mark {
+      position: relative;
+      flex: 0 0 auto;
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 20px;
+      color: #142029;
+      background: linear-gradient(145deg, #efd6a8, #c9a365);
+      box-shadow: 0 13px 32px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.45);
+      font-size: 35px;
+      font-weight: 750;
+      letter-spacing: -.08em;
+      line-height: 1;
+      animation: logo-float 4.5s ease-in-out infinite;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 2px;
+      background: rgba(20,32,41,.55);
+      box-shadow: -8px 0 0 rgba(20,32,41,.22), 0 8px 0 rgba(20,32,41,.22);
+    }
+
+    @keyframes logo-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .brand-name { font-size: 25px; font-weight: 700; letter-spacing: .12em; line-height: 1.2; }
+    .brand-edition { margin-top: 6px; color: #a8b6c0; font-size: 10px; letter-spacing: .23em; }
+
+    .brand-copy { margin-top: clamp(48px, 7vh, 72px); max-width: 480px; }
+    .brand-kicker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      color: var(--gold-light);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .12em;
+    }
+    .brand-kicker::before { content: ""; width: 26px; height: 1px; background: var(--gold); }
+
+    .brand-copy h1 {
+      max-width: 450px;
+      margin: 0;
+      font-size: clamp(35px, 4vw, 49px);
+      font-weight: 650;
+      line-height: 1.22;
+      letter-spacing: -.035em;
+    }
+
+    .brand-copy p {
+      max-width: 390px;
+      margin: 22px 0 0;
+      color: #a9b7c0;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .brand-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 34px;
+      color: #91a3ae;
+      font-size: 12px;
+    }
+    .brand-note svg { width: 16px; height: 16px; color: #b7c6cd; }
+
+    .login-card {
+      width: 100%;
+      max-width: 408px;
+      justify-self: end;
+      padding: 29px 30px 27px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 17px;
+      background: linear-gradient(150deg, rgba(255,255,255,.09), rgba(255,255,255,.052));
+      box-shadow: 0 24px 60px rgba(0,0,0,.27), inset 0 1px 0 rgba(255,255,255,.05);
+      backdrop-filter: blur(24px);
+      animation: card-in 520ms cubic-bezier(.2,.75,.25,1) both;
+    }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+    .local-badge { display: inline-flex; align-items: center; gap: 7px; color: #b8c7ce; font-size: 11px; }
+    .local-badge svg { width: 14px; height: 14px; color: var(--gold); }
+
+    .language-switch {
+      display: flex;
+      padding: 3px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 8px;
+      background: rgba(0,0,0,.12);
+    }
+
+    .language-button {
+      border: 0;
+      border-radius: 5px;
+      padding: 5px 8px;
+      color: #8fa0ab;
+      background: transparent;
+      font-size: 10px;
+      cursor: pointer;
+      transition: background 140ms ease, color 140ms ease;
+    }
+    .language-button.active { color: #f7e5c3; background: rgba(217,186,132,.13); }
+
+    .card-heading { margin-top: 31px; }
+    .card-heading h2 { margin: 0; font-size: 27px; font-weight: 650; letter-spacing: -.025em; }
+    .card-heading p { margin: 10px 0 0; color: #a1afb9; font-size: 13px; line-height: 1.65; }
+
+    .login-form { margin-top: 27px; }
+    .field-label { display: block; margin-bottom: 9px; color: #d8dfe3; font-size: 12px; font-weight: 550; }
+
+    .password-wrap { position: relative; }
+    .password-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      width: 17px;
+      height: 17px;
+      color: #8e9da7;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: color 150ms ease;
+    }
+
+    .password-input {
+      width: 100%;
+      height: 49px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 10px;
+      padding: 0 49px 0 43px;
+      color: #f8fafb;
+      caret-color: var(--gold-light);
+      background: rgba(2,10,15,.28);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.08), 0 0 0 0 rgba(217,186,132,0);
+      transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+    }
+    .password-input::placeholder { color: #70818c; }
+    .password-input:hover:not(:disabled) { border-color: rgba(255,255,255,.22); }
+    .password-input:focus {
+      border-color: rgba(217,186,132,.72);
+      background: rgba(2,10,15,.39);
+      box-shadow: 0 0 0 3px rgba(217,186,132,.09);
+      outline: none;
+    }
+    .password-input:disabled { opacity: .55; cursor: not-allowed; }
+    .password-wrap:focus-within .password-icon { color: var(--gold-light); }
+
+    .reveal-button {
+      position: absolute;
+      right: 6px;
+      top: 5px;
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 8px;
+      color: #91a0aa;
+      background: transparent;
+      cursor: pointer;
+      transition: color 140ms ease, background 140ms ease;
+    }
+    .reveal-button:hover:not(:disabled) { color: #f4dfb9; background: rgba(255,255,255,.06); }
+    .reveal-button:disabled { opacity: .45; cursor: not-allowed; }
+    .reveal-button svg { width: 19px; height: 19px; }
+    .eye-closed { display: none; }
+    .reveal-button.revealed .eye-open { display: none; }
+    .reveal-button.revealed .eye-closed { display: block; }
+
+    .feedback {
+      margin-top: 13px;
+      padding: 11px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      border: 1px solid rgba(255,142,133,.2);
+      border-radius: 9px;
+      color: var(--danger);
+      background: rgba(151,45,43,.11);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .feedback[hidden] { display: none; }
+    .feedback svg { flex: 0 0 auto; width: 15px; height: 15px; margin-top: 1px; }
+    .app-shell[data-state="error"] .password-input { border-color: rgba(255,142,133,.55); }
+    .app-shell[data-state="locked"] .password-input { border-color: rgba(255,142,133,.35); }
+
+    .submit-button {
+      position: relative;
+      width: 100%;
+      height: 49px;
+      margin-top: 19px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+      color: #172128;
+      background: linear-gradient(135deg, #e8cd9b, #d2af73);
+      box-shadow: 0 8px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.4);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transform: translateY(0);
+      transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+    }
+    .submit-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.055);
+      box-shadow: 0 12px 25px rgba(0,0,0,.23), inset 0 1px 0 rgba(255,255,255,.45);
+    }
+    .submit-button:active:not(:disabled) { transform: translateY(0); }
+    .submit-button:disabled { opacity: .67; cursor: not-allowed; }
+    .submit-button svg { width: 17px; height: 17px; transition: transform 150ms ease; }
+    .submit-button:hover:not(:disabled) .arrow-icon { transform: translateX(3px); }
+
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(20,30,38,.25);
+      border-top-color: #142029;
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .app-shell[data-state="loading"] .spinner { display: block; }
+    .app-shell[data-state="loading"] .arrow-icon { display: none; }
+
+    .card-actions { margin-top: 18px; display: flex; justify-content: center; }
+    .text-button {
+      border: 0;
+      padding: 4px 7px;
+      color: #aab8c1;
+      background: transparent;
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 140ms ease;
+    }
+    .text-button:hover { color: var(--gold-light); }
+
+    .privacy-note {
+      margin: 23px 0 0;
+      padding-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border-top: 1px solid rgba(255,255,255,.075);
+      color: #758792;
+      font-size: 10px;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .privacy-note svg { flex: 0 0 auto; width: 12px; height: 12px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 20;
+      width: max-content;
+      max-width: calc(100% - 36px);
+      padding: 12px 17px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      color: #ecf1f4;
+      background: rgba(16,29,38,.96);
+      box-shadow: 0 14px 40px rgba(0,0,0,.38);
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 12px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+    .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 900px) {
+      body { padding: 12px; }
+      .app-shell { min-height: 620px; }
+      .login-layout {
+        min-height: 568px;
+        grid-template-columns: minmax(0, .9fr) minmax(360px, 1.1fr);
+        gap: 28px;
+        padding: 40px 32px;
+      }
+      .brand-name { font-size: 21px; }
+      .brand-mark { width: 56px; height: 56px; border-radius: 17px; font-size: 30px; }
+      .brand-copy h1 { font-size: 34px; }
+      .brand-copy p { font-size: 13px; }
+      .login-card { padding: 25px; }
+    }
+
+    @media (max-width: 710px) {
+      .preview-bar { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .app-shell { border-radius: 14px; }
+      .titlebar { padding-left: 15px; }
+      .window-control { width: 40px; }
+      .login-layout {
+        display: block;
+        padding: 31px 22px 34px;
+      }
+      .brand-panel { text-align: center; }
+      .brand-lockup { justify-content: center; }
+      .brand-mark { width: 50px; height: 50px; border-radius: 15px; font-size: 27px; animation: none; }
+      .brand-name { font-size: 20px; }
+      .brand-edition { font-size: 8px; }
+      .brand-copy { display: none; }
+      .login-card { max-width: 430px; margin: 30px auto 0; justify-self: auto; }
+    }
+
+    @media (max-width: 390px) {
+      body { padding: 8px; }
+      .login-layout { padding: 26px 13px 28px; }
+      .login-card { padding: 22px 19px; }
+      .brand-edition { letter-spacing: .15em; }
+      .card-heading h2 { font-size: 24px; }
+      .local-badge { font-size: 10px; }
+      .window-control { width: 35px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-bar" aria-label="原型预览工具">
+    <div class="preview-title">TPOS^ · 界面设计预览（不执行真实登录）</div>
+    <div class="state-picker" role="group" aria-label="预览状态">
+      <button class="state-button active" type="button" data-preview-state="default">默认</button>
+      <button class="state-button" type="button" data-preview-state="loading">加载</button>
+      <button class="state-button" type="button" data-preview-state="error">错误</button>
+      <button class="state-button" type="button" data-preview-state="locked">锁定</button>
+    </div>
+  </div>
+
+  <main class="app-shell" id="app" data-state="default">
+    <div class="background-layer" aria-hidden="true">
+      <div class="orb orb-one"></div>
+      <div class="orb orb-two"></div>
+      <div class="orb orb-three"></div>
+    </div>
+
+    <header class="titlebar">
+      <div class="window-brand">
+        <span class="window-brand-mark" aria-hidden="true">T</span>
+        <span>TPOS^</span>
+      </div>
+      <div class="window-controls" aria-hidden="true">
+        <span class="window-control">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+        <span class="window-control">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="3.5" y="3.5" width="9" height="9" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>
+        </span>
+        <span class="window-control">
+          <svg viewBox="0 0 16 16" fill="none"><path d="m4 4 8 8m0-8-8 8" stroke="currentColor" stroke-width="1.1"/></svg>
+        </span>
+      </div>
+    </header>
+
+    <div class="login-layout">
+      <section class="brand-panel" aria-label="TPOS^ 品牌">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">T</div>
+          <div>
+            <div class="brand-name">TPOS^</div>
+            <div class="brand-edition">RETAIL WORKSPACE</div>
+          </div>
+        </div>
+
+        <div class="brand-copy">
+          <div class="brand-kicker" data-i18n="kicker">简洁 · 安全 · 专注</div>
+          <h1 data-i18n="headline">让管理，<br>更简单。</h1>
+          <p data-i18n="brandText">专为日常经营打造的安全工作空间，清晰、可靠，从容开始每一天。</p>
+          <div class="brand-note">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3m-11 0h12v10H6V10Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 14v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span data-i18n="offlineNote">完全离线运行，无需连接互联网</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="login-card" aria-labelledby="login-title">
+        <div class="card-top">
+          <div class="local-badge">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="localAccess">本地安全访问</span>
+          </div>
+          <div class="language-switch" role="group" aria-label="语言 / Idioma">
+            <button class="language-button active" id="lang-zh" type="button" data-language="zh" aria-pressed="true">简体中文</button>
+            <button class="language-button" id="lang-es" type="button" data-language="es" aria-pressed="false">ES</button>
+          </div>
+        </div>
+
+        <div class="card-heading">
+          <h2 id="login-title" data-i18n="welcome">欢迎回来</h2>
+          <p data-i18n="instruction">输入管理员密码以继续</p>
+        </div>
+
+        <form class="login-form" id="login-form" novalidate>
+          <label class="field-label" for="password" data-i18n="passwordLabel">管理员密码</label>
+          <div class="password-wrap">
+            <svg class="password-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg>
+            <input class="password-input" id="password" name="password" type="password" autocomplete="current-password" spellcheck="false" data-i18n-placeholder="passwordPlaceholder" placeholder="输入密码" aria-describedby="feedback">
+            <button class="reveal-button" id="reveal-password" type="button" data-i18n-aria="showPassword" aria-label="显示密码" title="显示密码" aria-pressed="false">
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" stroke="currentColor" stroke-width="1.5"/></svg>
+              <svg class="eye-closed" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 4 16 16M10.5 6.1c.5-.1 1-.1 1.5-.1 6 0 9.5 6 9.5 6a17 17 0 0 1-2.2 2.8M6.2 7.3A16.6 16.6 0 0 0 2.5 12s3.5 6 9.5 6c1.4 0 2.7-.3 3.8-.8M9.8 9.8a3 3 0 0 0 4.4 4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <div class="feedback" id="feedback" role="alert" hidden>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v6m0 4h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span id="feedback-text"></span>
+          </div>
+
+          <button class="submit-button" id="submit-button" type="submit">
+            <span class="spinner" aria-hidden="true"></span>
+            <span id="submit-label" data-i18n="enter">进入系统</span>
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </form>
+
+        <div class="card-actions">
+          <button class="text-button" id="change-password" type="button" data-i18n="changePassword">修改密码</button>
+        </div>
+
+        <p class="privacy-note">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          <span data-i18n="privacy">密码仅用于本机验证，不会上传到外部服务</span>
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const translations = {
+        zh: {
+          kicker: "简洁 · 安全 · 专注",
+          headline: "让管理，<br>更简单。",
+          brandText: "专为日常经营打造的安全工作空间，清晰、可靠，从容开始每一天。",
+          offlineNote: "完全离线运行，无需连接互联网",
+          localAccess: "本地安全访问",
+          welcome: "欢迎回来",
+          instruction: "输入管理员密码以继续",
+          passwordLabel: "管理员密码",
+          passwordPlaceholder: "输入密码",
+          enter: "进入系统",
+          verifying: "正在验证…",
+          lockedButton: "暂时锁定",
+          changePassword: "修改密码",
+          privacy: "密码仅用于本机验证，不会上传到外部服务",
+          showPassword: "显示密码",
+          hidePassword: "隐藏密码",
+          error: "密码不正确，请重试。还可尝试 4 次。",
+          locked: "连续失败 5 次，登录已临时锁定。请 15 分钟后再试。",
+          prototypeToast: "这是视觉原型：未连接数据库，也未执行密码验证。",
+          changeToast: "修改密码将在正式版本中提供，并需验证当前密码。"
+        },
+        es: {
+          kicker: "SENCILLO · SEGURO · PROFESIONAL",
+          headline: "La gestión,<br>más sencilla.",
+          brandText: "Un espacio de trabajo seguro para tu negocio diario: claro, fiable y siempre listo.",
+          offlineNote: "Funciona sin conexión. No necesita Internet",
+          localAccess: "Acceso local seguro",
+          welcome: "Bienvenido",
+          instruction: "Introduce la contraseña de administrador para continuar",
+          passwordLabel: "Contraseña de administrador",
+          passwordPlaceholder: "Introduce la contraseña",
+          enter: "Entrar al sistema",
+          verifying: "Verificando…",
+          lockedButton: "Acceso bloqueado",
+          changePassword: "Cambiar contraseña",
+          privacy: "La contraseña solo se verifica en este equipo; no se envía a servicios externos",
+          showPassword: "Mostrar contraseña",
+          hidePassword: "Ocultar contraseña",
+          error: "La contraseña es incorrecta. Inténtalo de nuevo. Quedan 4 intentos.",
+          locked: "Tras 5 intentos fallidos, el acceso se ha bloqueado temporalmente. Vuelve a intentarlo en 15 minutos.",
+          prototypeToast: "Prototipo visual: no hay base de datos ni verificación de contraseña.",
+          changeToast: "La versión final permitirá cambiar la contraseña tras verificar la actual."
+        }
+      };
+
+      const app = document.getElementById("app");
+      const password = document.getElementById("password");
+      const revealButton = document.getElementById("reveal-password");
+      const submitButton = document.getElementById("submit-button");
+      const submitLabel = document.getElementById("submit-label");
+      const feedback = document.getElementById("feedback");
+      const feedbackText = document.getElementById("feedback-text");
+      const toast = document.getElementById("toast");
+      let language = "zh";
+      let state = "default";
+      let toastTimer;
+
+      function t(key) { return translations[language][key]; }
+
+      function applyLanguage() {
+        document.documentElement.lang = language === "zh" ? "zh-CN" : "es";
+        document.querySelectorAll("[data-i18n]").forEach((element) => {
+          const key = element.dataset.i18n;
+          if (key === "headline") element.innerHTML = t(key);
+          else element.textContent = t(key);
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+          element.placeholder = t(element.dataset.i18nPlaceholder);
+        });
+        document.querySelectorAll("[data-language]").forEach((button) => {
+          const selected = button.dataset.language === language;
+          button.classList.toggle("active", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        updateRevealLabel();
+        renderState();
+      }
+
+      function updateRevealLabel() {
+        const visible = password.type === "text";
+        const label = visible ? t("hidePassword") : t("showPassword");
+        revealButton.setAttribute("aria-label", label);
+        revealButton.setAttribute("title", label);
+      }
+
+      function renderState() {
+        app.dataset.state = state;
+        const blocked = state === "loading" || state === "locked";
+        password.disabled = blocked;
+        revealButton.disabled = blocked;
+        submitButton.disabled = blocked;
+        feedback.hidden = state !== "error" && state !== "locked";
+
+        if (state === "error") feedbackText.textContent = t("error");
+        if (state === "locked") feedbackText.textContent = t("locked");
+        if (state === "loading") submitLabel.textContent = t("verifying");
+        else if (state === "locked") submitLabel.textContent = t("lockedButton");
+        else submitLabel.textContent = t("enter");
+
+        document.querySelectorAll("[data-preview-state]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.previewState === state);
+        });
+      }
+
+      function showToast(message) {
+        window.clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add("visible");
+        toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 3800);
+      }
+
+      document.querySelectorAll("[data-language]").forEach((button) => {
+        button.addEventListener("click", () => {
+          language = button.dataset.language;
+          applyLanguage();
+        });
+      });
+
+      document.querySelectorAll("[data-preview-state]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state = button.dataset.previewState;
+          renderState();
+        });
+      });
+
+      revealButton.addEventListener("click", () => {
+        const visible = password.type === "text";
+        password.type = visible ? "password" : "text";
+        revealButton.classList.toggle("revealed", !visible);
+        revealButton.setAttribute("aria-pressed", String(!visible));
+        updateRevealLabel();
+        password.focus();
+      });
+
+      document.getElementById("login-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        showToast(t("prototypeToast"));
+      });
+
+      document.getElementById("change-password").addEventListener("click", () => {
+        showToast(t("changeToast"));
+      });
+
+      applyLanguage();
+    })();
+  </script>
+</body>
+</html>
