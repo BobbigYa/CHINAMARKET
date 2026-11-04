@@ -38,10 +38,10 @@
                     <TextBlock Text="TPOS^" Margin="9,0,0,0" VerticalAlignment="Center" Foreground="#B9C5CC" FontSize="12" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Minimize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Minimize]}">
+                    <Button AutomationProperties.AutomationId="MinimizeWindowButton" Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Minimize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Minimize]}">
                         <TextBlock Text="—" FontSize="13" VerticalAlignment="Center" />
                     </Button>
-                    <Button Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Maximize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Maximize]}">
+                    <Button AutomationProperties.AutomationId="MaximizeWindowButton" Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Maximize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Maximize]}">
                         <TextBlock Text="▢" FontSize="15" VerticalAlignment="Center" />
                     </Button>
                     <Button AutomationProperties.AutomationId="CloseWindowButton" Style="{StaticResource IconButtonStyle}" Width="46" Height="50" Click="Close_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Close]}">

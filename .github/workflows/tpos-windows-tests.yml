@@ -125,6 +125,15 @@ jobs:
         run: |
           & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
 
+      - name: Capture EXE screenshots and measure real resource usage
+        if: success()
+        shell: pwsh
+        run: |
+          & scripts/windows-visual-performance.ps1 `
+            -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" `
+            -OutputDirectory "artifacts/visual" `
+            -EvidenceLabel "${{ github.sha }}"
+
       - name: Inspect real EXE database and production parameters
         if: success()
         shell: pwsh
@@ -161,6 +170,14 @@ jobs:
         with:
           name: tpos-win-x64-self-contained
           path: artifacts/Tpos-win-x64-self-contained/
+          retention-days: 14
+
+      - name: Upload visual and performance evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-visual-performance
+          path: artifacts/visual/
           retention-days: 14
 
       - name: Upload acceptance evidence and publish manifest
