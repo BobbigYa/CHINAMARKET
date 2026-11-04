@@ -7,7 +7,14 @@ public interface ICredentialStore
     Task<CredentialState?> GetCredentialAsync(CancellationToken cancellationToken = default);
 
     Task<bool> CreateCredentialAsync(
+        string email,
         string passwordHash,
+        DateTimeOffset nowUtc,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> BindEmailAsync(
+        string email,
+        string expectedCurrentHash,
         DateTimeOffset nowUtc,
         CancellationToken cancellationToken = default);
 
@@ -19,9 +26,7 @@ public interface ICredentialStore
 
     Task ResetFailedAttemptsAsync(CancellationToken cancellationToken = default);
 
-    Task ResetExpiredLockoutAsync(
-        DateTimeOffset nowUtc,
-        CancellationToken cancellationToken = default);
+    Task ResetExpiredLockoutAsync(DateTimeOffset nowUtc, CancellationToken cancellationToken = default);
 
     Task<bool> UpdatePasswordHashAsync(
         string expectedCurrentHash,

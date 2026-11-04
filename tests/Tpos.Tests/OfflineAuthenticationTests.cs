@@ -6,13 +6,14 @@ namespace Tpos.Tests;
 
 public sealed class OfflineAuthenticationTests
 {
+    private const string Email = "offline@example.test";
     private const string Password = "Offline-Test-Password-2026!";
 
     [OfflineFact]
     public async Task OutboundNetworkBlocked_LocalSqliteLoginStillSucceeds()
     {
         using var harness = await TestHarness.CreateAsync();
-        var initialized = await harness.Service.InitializeAdministratorAsync(Password, Password);
+        var initialized = await harness.Service.InitializeAdministratorAsync(Email, Password, Password);
         Assert.True(initialized.IsSuccess);
 
         var networkIsBlocked = false;
@@ -31,7 +32,7 @@ public sealed class OfflineAuthenticationTests
 
         Assert.True(networkIsBlocked, "测试进程的外网连接未被阻断，不能把本项视为离线测试。");
 
-        var result = await harness.Service.AuthenticateAsync(Password);
+        var result = await harness.Service.AuthenticateAsync(Email, Password);
         Assert.True(result.IsSuccess);
     }
 }

@@ -7,6 +7,7 @@ namespace Tpos.Tests;
 
 public sealed class DesktopNavigationTests
 {
+    private const string Email = "navigation@example.test";
     private const string InitialPassword = "Navigation-Test-Password-2026!";
 
     [Fact]
@@ -21,10 +22,12 @@ public sealed class DesktopNavigationTests
         var authenticationPage = Assert.IsType<AuthenticationViewModel>(main.CurrentPage);
         Assert.Same(authenticationPage.Setup, authenticationPage.CurrentForm);
         Assert.False(session.IsAuthenticated);
+        authenticationPage.Setup.Email = Email;
 
         await authenticationPage.Setup.InitializeAsync(InitialPassword, InitialPassword);
         Assert.Same(authenticationPage.Login, authenticationPage.CurrentForm);
         Assert.False(session.IsAuthenticated);
+        authenticationPage.Login.Email = Email;
 
         await authenticationPage.Login.LoginAsync("Wrong-Navigation-Password!");
         Assert.Same(authenticationPage, main.CurrentPage);

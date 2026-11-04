@@ -53,6 +53,7 @@ public sealed class AuthenticationService : IAuthenticationService
     }
 
     public async Task<AuthResult> InitializeAdministratorAsync(
+        string email,
         string password,
         string confirmation,
         CancellationToken cancellationToken = default)
@@ -63,6 +64,12 @@ public sealed class AuthenticationService : IAuthenticationService
             if (existing is not null)
             {
                 return AuthResult.Failure(AuthError.AlreadyInitialized);
+            }
+
+            var emailError = EmailPolicy.Validate(email);
+            if (emailError != AuthError.None)
+            {
+                return AuthResult.Failure(emailError);
             }
 
             var validationError = PasswordPolicy.Validate(password, confirmation);
@@ -76,6 +83,7 @@ public sealed class AuthenticationService : IAuthenticationService
                 cancellationToken);
 
             var created = await _store.CreateCredentialAsync(
+                EmailPolicy.Normalize(email),
                 passwordHash,
                 _timeProvider.GetUtcNow(),
                 cancellationToken);
@@ -91,9 +99,12 @@ public sealed class AuthenticationService : IAuthenticationService
     }
 
     public async Task<AuthResult> AuthenticateAsync(
+        string email,
         string password,
         CancellationToken cancellationToken = default)
     {
+        var emailError = EmailPolicy.Validate(email);
+        var normalizedEmail = emailError == AuthError.None ? EmailPolicy.Normalize(email) : string.Empty;
         if (string.IsNullOrEmpty(password))
         {
             return AuthResult.Failure(AuthError.PasswordRequired);
@@ -137,8 +148,33 @@ public sealed class AuthenticationService : IAuthenticationService
                 return AuthResult.Failure(AuthError.CredentialDataInvalid);
             }
 
+            if (emailError != AuthError.None)
+            {
+                return await RegisterFailureAsync(cancellationToken);
+            }
+
             if (passwordIsValid)
             {
+                if (credential.Email is null)
+                {
+                    var bound = await _store.BindEmailAsync(
+                        normalizedEmail,
+                        credential.PasswordHash,
+                        now,
+                        cancellationToken);
+                    if (!bound)
+                    {
+                        return AuthResult.Failure(AuthError.StorageError);
+                    }
+                }
+                else if (!string.Equals(
+                    credential.Email,
+                    normalizedEmail,
+                    StringComparison.Ordinal))
+                {
+                    return await RegisterFailureAsync(cancellationToken);
+                }
+
                 await _store.ResetFailedAttemptsAsync(cancellationToken);
                 return AuthResult.Success();
             }

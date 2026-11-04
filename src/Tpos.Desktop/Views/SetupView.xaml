@@ -1,38 +1,53 @@
 <UserControl x:Class="Tpos.Desktop.Views.SetupView"
              AutomationProperties.AutomationId="SetupView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="clr-namespace:Tpos.Desktop.Controls">
-    <UserControl.Resources>
-        <Storyboard x:Key="CardIn">
-            <DoubleAnimation Storyboard.TargetName="SetupCard" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4" />
-            <DoubleAnimation Storyboard.TargetName="SetupCard" Storyboard.TargetProperty="RenderTransform.Y" From="12" To="0" Duration="0:0:0.4" />
-        </Storyboard>
-    </UserControl.Resources>
-    <Border x:Name="SetupCard" Style="{StaticResource CardBorderStyle}" MaxWidth="408" HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0">
-        <Border.RenderTransform><TranslateTransform Y="12" /></Border.RenderTransform>
-        <StackPanel>
-            <DockPanel LastChildFill="False">
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <Path Data="M6,1 L1,3.5 L1,7 C1,10 3,13 6,15 C9,13 11,10 11,7 L11,3.5 Z M4,7.5 L5.5,9 L8.5,5.5" Stroke="#D9BA84" StrokeThickness="1.2" Width="14" Height="14" Stretch="Uniform" />
-                    <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[LocalAccess]}" Foreground="#B8C7CE" FontSize="11" Margin="7,0,0,0" VerticalAlignment="Center" />
-                </StackPanel>
-                <controls:LanguageSelector DockPanel.Dock="Right" />
-            </DockPanel>
-            <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[SetupTitle]}" Foreground="#F7F8FA" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,27,0,0" />
-            <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[SetupInstruction]}" Foreground="#A1AFB9" FontSize="13" LineHeight="21" TextWrapping="Wrap" Margin="0,9,0,0" />
-            <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[NewPassword]}" Foreground="#D8DFE3" FontSize="12" FontWeight="SemiBold" Margin="0,23,0,9" />
-            <PasswordBox x:Name="NewPasswordInput" AutomationProperties.AutomationId="SetupNewPassword" Style="{StaticResource LoginPasswordBoxStyle}" IsEnabled="{Binding IsInputEnabled}" PasswordChar="•" />
-            <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[ConfirmPassword]}" Foreground="#D8DFE3" FontSize="12" FontWeight="SemiBold" Margin="0,16,0,9" />
-            <PasswordBox x:Name="ConfirmationInput" AutomationProperties.AutomationId="SetupPasswordConfirmation" Style="{StaticResource LoginPasswordBoxStyle}" IsEnabled="{Binding IsInputEnabled}" PasswordChar="•" PreviewKeyDown="Confirmation_OnPreviewKeyDown" />
-            <Border Margin="0,13,0,0" Padding="11" CornerRadius="9" BorderThickness="1" BorderBrush="#33FF8E85" Background="#1C972D2B" Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibility}}">
-                <TextBlock Text="{Binding ErrorMessage}" Foreground="#FFB4AB" FontSize="11" LineHeight="18" TextWrapping="Wrap" />
-            </Border>
-            <Button AutomationProperties.AutomationId="SetupSubmitButton" Style="{StaticResource PrimaryButtonStyle}" Content="{Binding SubmitText}" Margin="0,19,0,0" Click="Initialize_OnClick" IsEnabled="{Binding IsInputEnabled}" />
-            <ProgressBar Height="3" Margin="10,5,10,0" IsIndeterminate="True" Foreground="#D9BA84" Background="Transparent" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibility}}" />
-            <Border BorderThickness="0,1,0,0" BorderBrush="#13FFFFFF" Margin="0,18,0,0" Padding="0,16,0,0">
-                <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[SetupSecurityNote]}" Foreground="#8798A2" FontSize="10" LineHeight="17" TextWrapping="Wrap" TextAlignment="Center" />
-            </Border>
-        </StackPanel>
-    </Border>
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Width="340" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[SetupTitle]}"
+                   Foreground="#F7F8FA" FontSize="22" FontWeight="SemiBold" TextAlignment="Center" />
+        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[SetupInstruction]}"
+                   Foreground="#A1AFB9" FontSize="11" LineHeight="17" TextWrapping="Wrap"
+                   TextAlignment="Center" Margin="0,7,0,16" />
+
+        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[EmailAddress]}"
+                   Foreground="#E5E7EB" FontSize="12" Margin="2,0,0,6" />
+        <TextBox x:Name="EmailInput"
+                 AutomationProperties.AutomationId="SetupEmail"
+                 Style="{StaticResource EmailTextBoxStyle}"
+                 Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding IsInputEnabled}"
+                 MaxLength="254" />
+
+        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[NewPassword]}"
+                   Foreground="#E5E7EB" FontSize="12" Margin="2,12,0,6" />
+        <PasswordBox x:Name="NewPasswordInput"
+                     AutomationProperties.AutomationId="SetupNewPassword"
+                     Style="{StaticResource LoginPasswordBoxStyle}"
+                     IsEnabled="{Binding IsInputEnabled}"
+                     PasswordChar="•" />
+
+        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[ConfirmPassword]}"
+                   Foreground="#E5E7EB" FontSize="12" Margin="2,12,0,6" />
+        <PasswordBox x:Name="ConfirmationInput"
+                     AutomationProperties.AutomationId="SetupPasswordConfirmation"
+                     Style="{StaticResource LoginPasswordBoxStyle}"
+                     IsEnabled="{Binding IsInputEnabled}"
+                     PasswordChar="•"
+                     PreviewKeyDown="Confirmation_OnPreviewKeyDown" />
+
+        <TextBlock AutomationProperties.AutomationId="SetupMessage"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="#FFB4AB" FontSize="11" LineHeight="16" TextWrapping="Wrap"
+                   TextAlignment="Center" Margin="4,9,4,0"
+                   Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibility}}" />
+        <Button AutomationProperties.AutomationId="SetupSubmitButton"
+                Style="{StaticResource PrimaryButtonStyle}"
+                Content="{Binding SubmitText}"
+                Margin="0,15,0,0"
+                Click="Initialize_OnClick"
+                IsEnabled="{Binding IsInputEnabled}" />
+        <TextBlock Text="{Binding Source={StaticResource Loc}, Path=[SetupSecurityNote]}"
+                   Foreground="#8798A2" FontSize="10" LineHeight="15" TextWrapping="Wrap"
+                   TextAlignment="Center" Margin="8,13,8,0" />
+    </StackPanel>
 </UserControl>

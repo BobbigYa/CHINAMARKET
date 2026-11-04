@@ -17,6 +17,7 @@ public sealed class LoginViewModel : ObservableObject
     private string? _successMessageKey;
     private int _remainingAttempts = AuthenticationService.MaximumFailedAttempts;
     private string _message = string.Empty;
+    private string _email = string.Empty;
     private string _lockRemainingText = string.Empty;
     private bool _isBusy;
     private bool _isLocked;
@@ -61,6 +62,12 @@ public sealed class LoginViewModel : ObservableObject
 
     public bool HasLockRemaining => !string.IsNullOrWhiteSpace(LockRemainingText);
 
+    public string Email
+    {
+        get => _email;
+        set => SetProperty(ref _email, value);
+    }
+
     public bool IsSuccessMessage { get; private set; }
 
     public bool IsBusy
@@ -91,7 +98,7 @@ public sealed class LoginViewModel : ObservableObject
 
     public bool IsInputEnabled => !IsBusy && !IsLocked;
 
-    public string SubmitText => IsBusy ? _localization["Verifying"] : _localization["EnterSystem"];
+    public string SubmitText => IsBusy ? _localization["Verifying"] : _localization["LoginAction"];
 
     public void ApplyStatus(LoginStatus status)
     {
@@ -130,7 +137,7 @@ public sealed class LoginViewModel : ObservableObject
         AuthResult result;
         try
         {
-            result = await _authenticationService.AuthenticateAsync(password);
+            result = await _authenticationService.AuthenticateAsync(Email, password);
         }
         catch (Exception)
         {

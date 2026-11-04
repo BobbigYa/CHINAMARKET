@@ -11,6 +11,7 @@ public sealed class SetupViewModel : ObservableObject
     private readonly Func<Task> _initialized;
     private AuthError _error = AuthError.None;
     private string _errorMessage = string.Empty;
+    private string _email = string.Empty;
     private bool _isBusy;
 
     public SetupViewModel(
@@ -36,6 +37,12 @@ public sealed class SetupViewModel : ObservableObject
     }
 
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+    public string Email
+    {
+        get => _email;
+        set => SetProperty(ref _email, value);
+    }
 
     public bool IsBusy
     {
@@ -68,7 +75,7 @@ public sealed class SetupViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            var result = await _authenticationService.InitializeAdministratorAsync(password, confirmation);
+            var result = await _authenticationService.InitializeAdministratorAsync(Email, password, confirmation);
             if (result.IsSuccess)
             {
                 await _initialized();

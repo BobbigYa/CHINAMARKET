@@ -5,6 +5,8 @@ public enum AuthError
     None,
     NotInitialized,
     AlreadyInitialized,
+    EmailRequired,
+    EmailInvalid,
     PasswordRequired,
     PasswordTooShort,
     PasswordTooLong,

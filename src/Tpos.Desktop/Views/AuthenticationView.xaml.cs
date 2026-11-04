@@ -1,69 +1,62 @@
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Animation;
+using Tpos.Desktop.ViewModels;
 
 namespace Tpos.Desktop.Views;
 
 public partial class AuthenticationView
 {
-    private bool _animationsPaused;
-    private bool _animationStarted;
-
     public AuthenticationView()
     {
         InitializeComponent();
-        Loaded += (_, _) => UpdateLogoAnimation();
-        Unloaded += (_, _) => StopLogoAnimation();
-        IsVisibleChanged += (_, _) => UpdateLogoAnimation();
+        Loaded += (_, _) => ApplyPreferredWindowHeight();
+        Unloaded += (_, _) => UnsubscribeViewModel();
+        DataContextChanged += (_, _) => SubscribeViewModel();
     }
 
-    public void SetAnimationsPaused(bool paused)
+    private void SubscribeViewModel()
     {
-        _animationsPaused = paused;
-        UpdateLogoAnimation();
+        UnsubscribeViewModel();
+        if (DataContext is AuthenticationViewModel viewModel)
+        {
+            viewModel.PropertyChanged += ViewModel_OnPropertyChanged;
+        }
+
+        ApplyPreferredWindowHeight();
     }
 
-    private void UpdateLogoAnimation()
+    private void UnsubscribeViewModel()
     {
-        if (Resources["LogoFloat"] is not Storyboard storyboard)
+        if (DataContext is AuthenticationViewModel viewModel)
+        {
+            viewModel.PropertyChanged -= ViewModel_OnPropertyChanged;
+        }
+    }
+
+    private void ViewModel_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AuthenticationViewModel.CurrentForm))
+        {
+            ApplyPreferredWindowHeight();
+        }
+    }
+
+    private void ApplyPreferredWindowHeight()
+    {
+        if (!IsLoaded || DataContext is not AuthenticationViewModel viewModel)
         {
             return;
         }
 
-        if (!IsVisible || !IsLoaded || !SystemParameters.ClientAreaAnimation)
+        var window = Window.GetWindow(this);
+        if (window is null || window.WindowState != WindowState.Normal)
         {
-            StopLogoAnimation();
-            BrandMark.RenderTransform = new System.Windows.Media.TranslateTransform();
             return;
         }
 
-        if (_animationsPaused)
-        {
-            if (_animationStarted)
-            {
-                storyboard.Pause(this);
-            }
-
-            return;
-        }
-
-        if (_animationStarted)
-        {
-            storyboard.Resume(this);
-        }
-        else
-        {
-            storyboard.Begin(this, true);
-            _animationStarted = true;
-        }
-    }
-
-    private void StopLogoAnimation()
-    {
-        if (Resources["LogoFloat"] is Storyboard storyboard)
-        {
-            storyboard.Stop(this);
-        }
-
-        _animationStarted = false;
+        window.Height = viewModel.CurrentForm is SetupViewModel ? 700 : 540;
+        var workArea = SystemParameters.WorkArea;
+        window.Top = workArea.Top + (workArea.Height - window.Height) / 2;
+        window.Left = workArea.Left + (workArea.Width - window.Width) / 2;
     }
 }

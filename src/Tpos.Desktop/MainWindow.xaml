@@ -1,26 +1,23 @@
 <Window x:Class="Tpos.Desktop.MainWindow"
+        AutomationProperties.AutomationId="MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:views="clr-namespace:Tpos.Desktop.Views"
         xmlns:viewModels="clr-namespace:Tpos.Desktop.ViewModels"
         Title="TPOS^"
-        Width="440" Height="540" MinWidth="360" MinHeight="400"
+        Width="440" Height="540"
+        MinWidth="360" MinHeight="400"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="CanResize"
         AllowsTransparency="False"
-        Background="Transparent"
-        Icon="Assets/TposLogo.png"
-        FontFamily="Segoe UI Variable, Segoe UI, Microsoft YaHei UI"
-        TextOptions.TextFormattingMode="Display">
-    <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="0"
-                            GlassFrameThickness="-1"
-                            ResizeBorderThickness="6"
-                            CornerRadius="22"
-                            UseAeroCaptionButtons="False" />
-    </shell:WindowChrome.WindowChrome>
+        Background="#050D16"
+        Foreground="#F7F8FA"
+        FontFamily="Segoe UI, Microsoft YaHei UI"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:AuthenticationViewModel}">
             <views:AuthenticationView />
@@ -29,41 +26,21 @@
             <views:DashboardView />
         </DataTemplate>
     </Window.Resources>
-    <Border x:Name="WindowSurface"
-            Background="#A80B1822"
-            BorderBrush="#38FFFFFF"
-            BorderThickness="1"
-            CornerRadius="22"
-            ClipToBounds="True">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="46" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Border Grid.Row="0"
-                    Background="#18060F16"
-                    BorderBrush="#11000000"
-                    BorderThickness="0,0,0,1"
-                    MouseLeftButtonDown="TitleBar_OnMouseLeftButtonDown">
-                <DockPanel LastChildFill="False">
-                    <StackPanel Orientation="Horizontal" Margin="16,0,0,0" DockPanel.Dock="Left">
-                        <Image Source="Assets/TposLogo.png" Width="25" Height="25" VerticalAlignment="Center" />
-                        <TextBlock Text="TPOS^" Margin="9,0,0,0" VerticalAlignment="Center" Foreground="#D7E0E5" FontSize="12" FontWeight="SemiBold" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                        <Button AutomationProperties.AutomationId="MinimizeWindowButton" Style="{StaticResource IconButtonStyle}" Width="44" Height="46" Click="Minimize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Minimize]}">
-                            <TextBlock Text="—" FontSize="13" VerticalAlignment="Center" />
-                        </Button>
-                        <Button AutomationProperties.AutomationId="MaximizeWindowButton" Style="{StaticResource IconButtonStyle}" Width="44" Height="46" Click="Maximize_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Maximize]}">
-                            <TextBlock Text="▢" FontSize="15" VerticalAlignment="Center" />
-                        </Button>
-                        <Button AutomationProperties.AutomationId="CloseWindowButton" Style="{StaticResource IconButtonStyle}" Width="44" Height="46" Click="Close_OnClick" ToolTip="{Binding Source={StaticResource Loc}, Path=[Close]}">
-                            <TextBlock Text="×" FontSize="20" VerticalAlignment="Center" />
-                        </Button>
-                    </StackPanel>
-                </DockPanel>
-            </Border>
-            <ContentControl x:Name="PageContent" Grid.Row="1" Content="{Binding CurrentPage}" />
-        </Grid>
-    </Border>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="46" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="#071119" BorderBrush="#203843" BorderThickness="0,0,0,1">
+            <Grid Background="Transparent" MouseLeftButtonDown="TitleBar_OnMouseLeftButtonDown">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button AutomationProperties.AutomationId="MinimizeWindowButton" Style="{StaticResource IconButtonStyle}" Width="44" Height="46" Click="Minimize_OnClick" Content="&#xE921;" FontFamily="Segoe MDL2 Assets" />
+                    <Button AutomationProperties.AutomationId="MaximizeWindowButton" Style="{StaticResource IconButtonStyle}" Width="44" Height="46" Click="Maximize_OnClick" Content="&#xE922;" FontFamily="Segoe MDL2 Assets" />
+                    <Button AutomationProperties.AutomationId="CloseWindowButton" Style="{StaticResource IconButtonStyle}" Width="44" Height="46" Click="Close_OnClick" Content="&#xE8BB;" FontFamily="Segoe MDL2 Assets" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ContentControl x:Name="PageContent" Grid.Row="1" Content="{Binding CurrentPage}" />
+    </Grid>
 </Window>

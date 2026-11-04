@@ -17,18 +17,7 @@ public partial class SetupView
 
     private SetupViewModel ViewModel => (SetupViewModel)DataContext;
 
-    private void OnViewLoaded()
-    {
-        if (SystemParameters.ClientAreaAnimation)
-        {
-            ((Storyboard)Resources["CardIn"]).Begin(this, true);
-        }
-        else
-        {
-            SetupCard.Opacity = 1;
-            ((TranslateTransform)SetupCard.RenderTransform).Y = 0;
-        }
-    }
+    private void OnViewLoaded() => EmailInput.Focus();
 
     private async void Initialize_OnClick(object sender, RoutedEventArgs e) => await InitializeAsync();
 

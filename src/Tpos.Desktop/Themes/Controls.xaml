@@ -137,6 +137,37 @@
         </Setter>
     </Style>
 
+    <Style x:Key="EmailTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Height" Value="49" />
+        <Setter Property="Foreground" Value="#F8FAFB" />
+        <Setter Property="Background" Value="#D9000A12" />
+        <Setter Property="BorderBrush" Value="#4860A5FA" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="CaretBrush" Value="#EFD7A9" />
+        <Setter Property="Padding" Value="13,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="InputBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="2,0" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter Property="BorderBrush" Value="#D9BA84" TargetName="InputBorder" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.55" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="LoginPasswordBoxStyle" TargetType="PasswordBox">
         <Setter Property="Height" Value="49" />
         <Setter Property="Foreground" Value="#F8FAFB" />

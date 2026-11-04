@@ -26,16 +26,17 @@ public partial class LoginView
     private void OnViewLoaded()
     {
         UpdateRevealAccessibility();
-        if (SystemParameters.ClientAreaAnimation)
+        if (string.IsNullOrWhiteSpace(ViewModel.Email))
         {
-            ((Storyboard)Resources["CardIn"]).Begin(this, true);
+            EmailInput.Focus();
         }
         else
         {
-            LoginCard.Opacity = 1;
-            ((TranslateTransform)LoginCard.RenderTransform).Y = 0;
+            PasswordInput.Focus();
         }
     }
+
+    private async void Login_OnClick(object sender, RoutedEventArgs e) => await SubmitPasswordAsync();
 
     private async void Password_OnPreviewKeyDown(object sender, KeyEventArgs e)
     {

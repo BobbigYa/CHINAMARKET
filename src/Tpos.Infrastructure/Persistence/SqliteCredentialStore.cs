@@ -40,15 +40,36 @@ public sealed class SqliteCredentialStore : ICredentialStore
 
                 CREATE TABLE IF NOT EXISTS AdministratorCredential (
                     Id                  INTEGER PRIMARY KEY CHECK (Id = 1),
+                    Email               TEXT NULL,
                     PasswordHash        TEXT NOT NULL,
                     FailedAttempts      INTEGER NOT NULL DEFAULT 0 CHECK (FailedAttempts >= 0),
                     LockoutUntilUtc     INTEGER NULL,
                     CreatedAtUtc        INTEGER NOT NULL,
                     UpdatedAtUtc        INTEGER NOT NULL
                 );
-
-                PRAGMA user_version=1;
                 """;
+            await command.ExecuteNonQueryAsync(cancellationToken);
+
+            var hasEmail = false;
+            command.CommandText = "PRAGMA table_info(AdministratorCredential);";
+            await using (var reader = await command.ExecuteReaderAsync(cancellationToken))
+            {
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    if (string.Equals(reader.GetString(1), "Email", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasEmail = true;
+                    }
+                }
+            }
+
+            if (!hasEmail)
+            {
+                command.CommandText = "ALTER TABLE AdministratorCredential ADD COLUMN Email TEXT NULL;";
+                await command.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            command.CommandText = "PRAGMA user_version=2;";
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
         catch (SqliteException exception)
@@ -72,10 +93,12 @@ public sealed class SqliteCredentialStore : ICredentialStore
     }
 
     public async Task<bool> CreateCredentialAsync(
+        string email,
         string passwordHash,
         DateTimeOffset nowUtc,
         CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
 
         try
@@ -84,13 +107,46 @@ public sealed class SqliteCredentialStore : ICredentialStore
             await using var command = connection.CreateCommand();
             command.CommandText = """
                 INSERT OR IGNORE INTO AdministratorCredential (
-                    Id, PasswordHash, FailedAttempts, LockoutUntilUtc, CreatedAtUtc, UpdatedAtUtc)
+                    Id, Email, PasswordHash, FailedAttempts, LockoutUntilUtc, CreatedAtUtc, UpdatedAtUtc)
                 VALUES (
-                    1, $passwordHash, 0, NULL, $now, $now);
+                    1, $email, $passwordHash, 0, NULL, $now, $now);
                 """;
+            command.Parameters.AddWithValue("$email", EmailPolicy.Normalize(email));
             command.Parameters.AddWithValue("$passwordHash", passwordHash);
             command.Parameters.AddWithValue("$now", ToTimestamp(nowUtc));
 
+            return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
+        }
+        catch (SqliteException exception)
+        {
+            throw StoreFailure(exception);
+        }
+    }
+
+    public async Task<bool> BindEmailAsync(
+        string email,
+        string expectedCurrentHash,
+        DateTimeOffset nowUtc,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(expectedCurrentHash);
+
+        try
+        {
+            await using var connection = await OpenConnectionAsync(cancellationToken);
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                UPDATE AdministratorCredential
+                SET Email = $email,
+                    UpdatedAtUtc = $now
+                WHERE Id = 1
+                  AND Email IS NULL
+                  AND PasswordHash = $expectedCurrentHash;
+                """;
+            command.Parameters.AddWithValue("$email", EmailPolicy.Normalize(email));
+            command.Parameters.AddWithValue("$expectedCurrentHash", expectedCurrentHash);
+            command.Parameters.AddWithValue("$now", ToTimestamp(nowUtc));
             return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
         }
         catch (SqliteException exception)
@@ -241,7 +297,7 @@ public sealed class SqliteCredentialStore : ICredentialStore
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = """
-            SELECT PasswordHash, FailedAttempts, LockoutUntilUtc, CreatedAtUtc, UpdatedAtUtc
+            SELECT Email, PasswordHash, FailedAttempts, LockoutUntilUtc, CreatedAtUtc, UpdatedAtUtc
             FROM AdministratorCredential
             WHERE Id = 1;
             """;
@@ -253,11 +309,12 @@ public sealed class SqliteCredentialStore : ICredentialStore
         }
 
         return new CredentialState(
-            reader.GetString(0),
-            reader.GetInt32(1),
-            reader.IsDBNull(2) ? null : FromTimestamp(reader.GetInt64(2)),
-            FromTimestamp(reader.GetInt64(3)),
-            FromTimestamp(reader.GetInt64(4)));
+            reader.IsDBNull(0) ? null : reader.GetString(0),
+            reader.GetString(1),
+            reader.GetInt32(2),
+            reader.IsDBNull(3) ? null : FromTimestamp(reader.GetInt64(3)),
+            FromTimestamp(reader.GetInt64(4)),
+            FromTimestamp(reader.GetInt64(5)));
     }
 
     private static long ToTimestamp(DateTimeOffset value) => value.ToUniversalTime().ToUnixTimeMilliseconds();

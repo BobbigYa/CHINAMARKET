@@ -1,13 +1,11 @@
 <UserControl x:Class="Tpos.Desktop.Views.AuthenticationView"
+             AutomationProperties.AutomationId="AuthenticationView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Tpos.Desktop.Controls"
              xmlns:views="clr-namespace:Tpos.Desktop.Views"
              xmlns:viewModels="clr-namespace:Tpos.Desktop.ViewModels">
     <UserControl.Resources>
-        <Storyboard x:Key="LogoFloat" AutoReverse="True" RepeatBehavior="Forever">
-            <DoubleAnimation Storyboard.TargetName="BrandMark" Storyboard.TargetProperty="RenderTransform.Y" From="0" To="-4" Duration="0:0:2.2" />
-        </Storyboard>
         <DataTemplate DataType="{x:Type viewModels:SetupViewModel}">
             <views:SetupView />
         </DataTemplate>
@@ -16,37 +14,30 @@
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
-        <controls:AuroraBackground />
-        <Grid Margin="24,12,24,22">
+        <controls:ShapeWavesBackground />
+        <Grid Margin="32,20,32,24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,12">
-                <Border x:Name="BrandMark"
-                        Width="68" Height="68"
-                        CornerRadius="20"
-                        BorderThickness="1"
-                        BorderBrush="#32FFFFFF"
-                        Background="#0EFFFFFF"
-                        RenderTransformOrigin="0.5,0.5">
-                    <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
-                    <Image Source="../Assets/TposLogo.png" Width="62" Height="62" />
-                </Border>
-                <TextBlock Text="TPOS^"
-                           Margin="16,0,0,0"
-                           VerticalAlignment="Center"
-                           Foreground="#F7F8FA"
-                           FontSize="25"
-                           FontWeight="Bold" />
-            </StackPanel>
-            <ScrollViewer Grid.Row="1"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          VerticalContentAlignment="Center"
-                          PanningMode="VerticalFirst">
-                <ContentControl Content="{Binding CurrentForm}" HorizontalAlignment="Center" />
-            </ScrollViewer>
+            <Border Width="96" Height="96"
+                    CornerRadius="24"
+                    Background="#FFFFFF"
+                    BorderBrush="#35FFFFFF"
+                    BorderThickness="1"
+                    HorizontalAlignment="Center">
+                <Image AutomationProperties.AutomationId="TposLogo"
+                       AutomationProperties.Name="TPOS^ Logo"
+                       Source="../Assets/TposLogo.png"
+                       Width="82" Height="82"
+                       Stretch="Uniform"
+                       RenderOptions.BitmapScalingMode="HighQuality" />
+            </Border>
+            <ContentControl Grid.Row="1"
+                            Margin="0,20,0,0"
+                            Content="{Binding CurrentForm}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top" />
         </Grid>
     </Grid>
 </UserControl>
