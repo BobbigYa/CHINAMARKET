@@ -10,6 +10,7 @@ on:
       - "Directory.Build.props"
       - "src/**"
       - "tests/**"
+      - "scripts/**"
       - ".github/workflows/tpos-windows-tests.yml"
 
 permissions:
