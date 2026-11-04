@@ -24,7 +24,7 @@ public static class TposVisualNative {
     [DllImport("dwmapi.dll", PreserveSig = true)]
     public static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out int value, int size);
     [DllImport("dwmapi.dll", PreserveSig = true)]
-    public static extern bool DwmIsCompositionEnabled();
+    public static extern int DwmIsCompositionEnabled([MarshalAs(UnmanagedType.Bool)] out bool enabled);
 }
 "@
 
@@ -118,8 +118,11 @@ function Get-NativeWindowEvidence {
     $corner = 0
     $backdropHresult = [TposVisualNative]::DwmGetWindowAttribute($hwnd, 38, [ref]$backdrop, 4)
     $cornerHresult = [TposVisualNative]::DwmGetWindowAttribute($hwnd, 33, [ref]$corner, 4)
+    $compositionEnabled = $false
+    $compositionHresult = [TposVisualNative]::DwmIsCompositionEnabled([ref]$compositionEnabled)
     return [pscustomobject]@{
-        DwmCompositionEnabled = [TposVisualNative]::DwmIsCompositionEnabled()
+        DwmCompositionHresult = $compositionHresult
+        DwmCompositionEnabled = $compositionEnabled
         BackdropAttributeHresult = $backdropHresult
         BackdropAttributeValue = $backdrop
         CornerAttributeHresult = $cornerHresult
