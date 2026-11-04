@@ -227,14 +227,20 @@ try {
         if ($state.Current.WindowVisualState -ne [System.Windows.Automation.WindowVisualState]::Maximized) {
             throw "第 $cycle 次最大化未达到 Maximized 状态。"
         }
-        if ($cycle -eq 1) { $report.Screenshots += Capture-Window "03-maximized" }
+        if ($cycle -eq 1) {
+            $report.Screenshots += Capture-Window "03-maximized"
+            $report.MaximizedNativeWindow = Get-NativeWindowEvidence
+        }
         Invoke-Button "MaximizeWindowButton"
         $report.Gpu.Add((Get-GpuSample "第 $cycle 次恢复操作期间"))
         Start-Sleep -Milliseconds 700
         if ($state.Current.WindowVisualState -ne [System.Windows.Automation.WindowVisualState]::Normal) {
             throw "第 $cycle 次恢复未达到 Normal 状态。"
         }
-        if ($cycle -eq 1) { $report.Screenshots += Capture-Window "04-restored" }
+        if ($cycle -eq 1) {
+            $report.Screenshots += Capture-Window "04-restored"
+            $report.RestoredNativeWindow = Get-NativeWindowEvidence
+        }
         $report.WindowChecks.Add([pscustomobject]@{ Cycle = $cycle; Maximize = "Passed"; Restore = "Passed" })
     }
     $script:Process.Refresh()
@@ -294,6 +300,7 @@ try {
     $idleMemory = $report.Memory | Where-Object Stage -eq "登录窗口静止60秒后" | Select-Object -First 1
     $minMemory = $report.Memory | Where-Object Stage -eq "最小化10秒后" | Select-Object -First 1
     $ramGiB = [math]::Round($report.Environment.TotalPhysicalMemoryBytes / 1GB, 2)
+    Write-Host "::notice title=TPOS DWM 与圆角::$EvidenceLabel；启动=$($report.NativeWindow.ReportedWindowStatus)，DWM 属性 Backdrop=$($report.NativeWindow.BackdropAttributeValue)/Corner=$($report.NativeWindow.CornerAttributeValue)；最大化=$($report.MaximizedNativeWindow.ReportedWindowStatus)；恢复=$($report.RestoredNativeWindow.ReportedWindowStatus)。"
     Write-Host "::notice title=TPOS 性能环境::$($report.Environment.OsCaption)；Build $($report.Environment.OsBuild)；$($report.Environment.Cpu)；逻辑处理器 $($report.Environment.LogicalProcessors)；RAM $ramGiB GiB；DPI $($report.Environment.DpiX)；屏幕 $($report.Environment.ScreenWidth)x$($report.Environment.ScreenHeight)。"
     Write-Host "::notice title=TPOS 内存与 CPU::$EvidenceLabel；启动工作集 $([math]::Round($startupMemory.WorkingSetBytes / 1MB, 2)) MiB，私有 $([math]::Round($startupMemory.PrivateMemoryBytes / 1MB, 2)) MiB；60 秒工作集 $([math]::Round($idleMemory.WorkingSetBytes / 1MB, 2)) MiB，私有 $([math]::Round($idleMemory.PrivateMemoryBytes / 1MB, 2)) MiB；静止 CPU（单核当量）$($report.Idle60Seconds.CpuPercentOfOneCore)%；最小化工作集 $([math]::Round($minMemory.WorkingSetBytes / 1MB, 2)) MiB，CPU $($report.Minimized10Seconds.CpuPercentOfOneCore)%；窗口切换 CPU $($report.TransitionCpu.CpuPercentOfOneCore)%。"
     foreach ($gpu in $report.Gpu) {

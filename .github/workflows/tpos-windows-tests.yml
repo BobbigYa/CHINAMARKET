@@ -191,3 +191,40 @@ jobs:
             artifacts/database-inspection.json
             artifacts/publish-manifest.json
           retention-days: 14
+
+  legacy-window-compatibility:
+    needs: build-and-test
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish for legacy DWM validation
+        run: dotnet publish src/Tpos.Desktop/Tpos.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/Tpos-win-x64-self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false
+
+      - name: Run legacy Windows EXE authentication acceptance
+        shell: pwsh
+        run: |
+          & scripts/windows-ui-smoke.ps1 -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" -ResetTestData
+
+      - name: Run legacy DWM window and resource acceptance
+        shell: pwsh
+        run: |
+          & scripts/windows-visual-performance.ps1 `
+            -ExePath "artifacts/Tpos-win-x64-self-contained/Tpos.Desktop.exe" `
+            -OutputDirectory "artifacts/visual" `
+            -EvidenceLabel "Windows Server 2022 ${{ github.sha }}"
+
+      - name: Upload legacy Windows visual evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tpos-windows-server-2022-visual
+          path: artifacts/visual/
+          retention-days: 14
