@@ -121,6 +121,7 @@ function Get-NativeWindowEvidence {
     $compositionEnabled = $false
     $compositionHresult = [TposVisualNative]::DwmIsCompositionEnabled([ref]$compositionEnabled)
     return [pscustomobject]@{
+        ReportedWindowStatus = $script:Window.Current.ItemStatus
         DwmCompositionHresult = $compositionHresult
         DwmCompositionEnabled = $compositionEnabled
         BackdropAttributeHresult = $backdropHresult
@@ -286,6 +287,17 @@ try {
     $report.Outcome = "Passed"
     $report.CompletedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
     $report | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $OutputDirectory "visual-performance-results.json") -Encoding UTF8
+
+    $startupMemory = $report.Memory | Where-Object Stage -eq "启动后登录窗口" | Select-Object -First 1
+    $idleMemory = $report.Memory | Where-Object Stage -eq "登录窗口静止60秒后" | Select-Object -First 1
+    $minMemory = $report.Memory | Where-Object Stage -eq "最小化10秒后" | Select-Object -First 1
+    $ramGiB = [math]::Round($report.Environment.TotalPhysicalMemoryBytes / 1GB, 2)
+    Write-Host "::notice title=TPOS 性能环境::$($report.Environment.OsCaption)；Build $($report.Environment.OsBuild)；$($report.Environment.Cpu)；逻辑处理器 $($report.Environment.LogicalProcessors)；RAM $ramGiB GiB；DPI $($report.Environment.DpiX)；屏幕 $($report.Environment.ScreenWidth)x$($report.Environment.ScreenHeight)。"
+    Write-Host "::notice title=TPOS 内存与 CPU::$EvidenceLabel；启动工作集 $([math]::Round($startupMemory.WorkingSetBytes / 1MB, 2)) MiB，私有 $([math]::Round($startupMemory.PrivateMemoryBytes / 1MB, 2)) MiB；60 秒工作集 $([math]::Round($idleMemory.WorkingSetBytes / 1MB, 2)) MiB，私有 $([math]::Round($idleMemory.PrivateMemoryBytes / 1MB, 2)) MiB；静止 CPU（单核当量）$($report.Idle60Seconds.CpuPercentOfOneCore)%；最小化工作集 $([math]::Round($minMemory.WorkingSetBytes / 1MB, 2)) MiB，CPU $($report.Minimized10Seconds.CpuPercentOfOneCore)%；窗口切换 CPU $($report.TransitionCpu.CpuPercentOfOneCore)%。"
+    foreach ($gpu in $report.Gpu) {
+        $gpuText = if ($gpu.Available) { "$($gpu.UtilizationPercent)%" } else { "不可用：$($gpu.Detail)" }
+        Write-Host "::notice title=TPOS GPU 实测::$EvidenceLabel；$($gpu.Stage)：$gpuText"
+    }
     Write-Host "::notice title=TPOS 视觉与性能验收::$EvidenceLabel 完成；60 秒静止、窗口状态、截图、认证往返和 5 次重启均已执行。"
 }
 catch {
